@@ -1,7 +1,7 @@
 <template>
   <div class="hello">
-    <button @click="logout">Log Out</button>
-    <div>You Are Logged In.  This is the colors Page!</div>
+    <md-button @click="logout">Log Out</md-button>
+    <div>You Are Logged In. This is the colors Page!</div>
   </div>
 </template>
 
@@ -22,4 +22,4 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped lang="scss"></style>
