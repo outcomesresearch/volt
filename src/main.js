@@ -10,6 +10,10 @@ import {
   MdMenu,
   MdList,
   MdSnackbar,
+  MdApp,
+  MdDrawer,
+  MdToolbar,
+  MdContent
 } from "vue-material/dist/components";
 import "vue-material/dist/vue-material.min.css";
 import "vue-material/dist/theme/default.css";
@@ -20,6 +24,10 @@ Vue.use(MdCard);
 Vue.use(MdMenu);
 Vue.use(MdList);
 Vue.use(MdSnackbar);
+Vue.use(MdApp);
+Vue.use(MdDrawer);
+Vue.use(MdToolbar);
+Vue.use(MdContent);
 
 Vue.use(VueRouter);
 Vue.config.productionTip = false;
