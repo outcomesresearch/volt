@@ -47,8 +47,6 @@
 </template>
 
 <script>
-import FirebaseService from "@/services/firebase.service.js";
-
 export default {
   name: "login-view",
   data() {
@@ -69,8 +67,8 @@ export default {
   methods: {
     signin() {
       const router = this.$router;
-      FirebaseService.auth()
-        .signInWithEmailAndPassword(this.form.studyID, "password")
+      this.$store
+        .dispatch("LOGIN", { studyID: this.form.studyID })
         .then((result) => {
           console.log(result);
           return router.push("/");

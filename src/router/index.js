@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import FirebaseService from "../services/firebase.service.js";
+import store from "../store/";
 
 Vue.use(VueRouter);
 
@@ -12,7 +13,13 @@ const routes = [
     beforeEnter: function(to, from, next) {
       FirebaseService.auth().onAuthStateChanged(function(user) {
         if (user) {
-          return next();
+          FirebaseService.database()
+            .ref()
+            .on("value", function(data) {
+              const acct = data.val().notes.users[user.uid];
+              store.commit("SET_AUTH", acct);
+              return next();
+            });
         } else {
           return next("/login");
         }
