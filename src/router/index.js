@@ -5,26 +5,34 @@ import store from "../store/";
 
 Vue.use(VueRouter);
 
+const beforeEnter = function(to, from, next) {
+  FirebaseService.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      FirebaseService.database()
+        .ref()
+        .on("value", function(data) {
+          const acct = data.val().notes.users[user.uid];
+          store.commit("SET_AUTH", acct);
+          return next();
+        });
+    } else {
+      return next("/login");
+    }
+  });
+};
+
 const routes = [
   {
     path: `/`,
     name: `error-404`,
     component: () => import(`@/components/Colors.vue`),
-    beforeEnter: function(to, from, next) {
-      FirebaseService.auth().onAuthStateChanged(function(user) {
-        if (user) {
-          FirebaseService.database()
-            .ref()
-            .on("value", function(data) {
-              const acct = data.val().notes.users[user.uid];
-              store.commit("SET_AUTH", acct);
-              return next();
-            });
-        } else {
-          return next("/login");
-        }
-      });
-    },
+    beforeEnter,
+  },
+  {
+    path: `/sniff`,
+    name: `sniff-exercise`,
+    component: () => import(`@/components/Sniff.vue`),
+    beforeEnter,
   },
   {
     path: "/login",

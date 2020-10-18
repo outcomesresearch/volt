@@ -8,6 +8,9 @@
       seconds of rest between each scent. When you are ready to begin, please
       click START
     </div>
+    <div class="start-button md-primary">
+      <md-button @click="startExercise">Start</md-button>
+    </div>
   </div>
 </template>
 
@@ -19,7 +22,17 @@ export default {
   computed: {
     ...mapGetters(["currentUser"]),
   },
+  methods: {
+    startExercise() {
+      this.$router.push("/sniff")
+    }
+  }
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.start-button {
+  margin: auto;
+  max-width: min-content;
+}
+</style>

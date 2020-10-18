@@ -10,8 +10,12 @@
         University in St. Louis"
           />
 
+          <div class="counter">
+            <span v-if="counterStarted"> {{ counterValue }} sec remaining</span>
+          </div>
           <h3 v-if="currentUser" class="md-title">
-            Welcome, {{ currentUser.fname }}
+            Welcome,
+            {{ currentUser.fname | truncatedString(20) }}
           </h3>
           <md-button v-if="currentUser" @click="logout">Log Out</md-button>
         </md-app-toolbar>
@@ -28,8 +32,26 @@ import { mapGetters } from "vuex";
 
 export default {
   name: "App",
+  data() {
+    return {
+      counterStarted: false,
+      counter: 0,
+    };
+  },
+  mounted() {
+    this.$root.$on("counter-started", () => {
+      this.counterStarted = true;
+      setInterval(() => {
+        this.counter += 1;
+        this.$root.$emit("counter-changed", this.counter);
+      }, 1000);
+    });
+  },
   computed: {
     ...mapGetters(["currentUser"]),
+    counterValue() {
+      return 10 - this.counter > 0 ? 10 - this.counter : 0;
+    },
   },
   methods: {
     logout() {
@@ -68,11 +90,16 @@ body {
   max-height: 25px;
   vertical-align: bottom;
   margin: 0.55em 0;
-  margin-right: auto;
   pointer-events: none;
 }
 
 .md-title {
   font-size: 16px !important;
+}
+
+.counter {
+  font-size: 16px;
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>
