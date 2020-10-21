@@ -35,16 +35,26 @@ export default {
   data() {
     return {
       counterStarted: false,
+      intervalHandle: undefined,
       counter: 0,
     };
   },
   mounted() {
-    this.$root.$on("counter-started", () => {
+    this.$root.$on("counter-started", ({ resolve }) => {
+      console.log("starging Counter again");
       this.counterStarted = true;
-      setInterval(() => {
+      this.intervalHandle = setInterval(() => {
         this.counter += 1;
-        this.$root.$emit("counter-changed", this.counter);
+        this.$root.$emit("counter-changed", {
+          updatedValue: this.counter,
+          resolve,
+        });
       }, 1000);
+    });
+    this.$root.$on("counter-ended", () => {
+      clearInterval(this.intervalHandle);
+      this.counter = 0;
+      this.counterStarted = false;
     });
   },
   computed: {

@@ -2,9 +2,11 @@
   <div class="colors-wrapper">
     <md-progress-bar
       md-mode="determinate"
-      :md-value="amount * 10"
+      :md-value="$root.$children[0].counter * 10"
     ></md-progress-bar>
-    <div class="image-wrapper"><img :src="currentPicture" /></div>
+    <div class="image-wrapper">
+      <img :src="currentPicture" />
+    </div>
   </div>
 </template>
 
@@ -15,26 +17,32 @@ export default {
   name: "Sniff",
   data() {
     return {
-      amount: 0,
       pictures: [
         "/images/cedar.jpg",
         "/images/cloves.jpg",
         "/images/oranges.jpg",
         "/images/strawberries.jpg",
       ],
+      currentPicture: "",
     };
   },
   computed: {
     ...mapGetters(["currentUser"]),
-    currentPicture() {
-      return this.pictures[this.amount % 4];
-    },
   },
-  mounted() {
-    this.$root.$emit("counter-started");
-    this.$root.$on("counter-changed", (newVal) => {
-      this.amount = newVal;
+  async mounted() {
+    this.$root.$on("counter-changed", ({ updatedValue, resolve }) => {
+      if (updatedValue === 10) {
+        this.$root.$emit("counter-ended");
+        resolve();
+      }
     });
+
+    for (let i = 0; i < this.pictures.length; i++) {
+      await new Promise((resolve) => {
+        this.$root.$emit("counter-started", { resolve });
+        this.currentPicture = this.pictures[i];
+      });
+    }
   },
 };
 </script>
