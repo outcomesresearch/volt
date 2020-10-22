@@ -9,9 +9,8 @@
             alt="Branding for Washington
         University in St. Louis"
           />
-
           <div class="counter">
-            <span v-if="counterStarted"> {{ counterValue }} sec remaining</span>
+            <span v-if="counterStatus">{{ remaining }} sec remaining</span>
           </div>
           <h3 v-if="currentUser" class="md-title">
             Welcome,
@@ -34,33 +33,25 @@ export default {
   name: "App",
   data() {
     return {
-      counterStarted: false,
+      counterStatus: false,
       intervalHandle: undefined,
-      counter: 0,
+      ownCounter: 0,
+      timerLimit: 10000,
     };
   },
   mounted() {
-    this.$root.$on("counter-started", ({ resolve }) => {
-      console.log("starging Counter again");
-      this.counterStarted = true;
-      this.intervalHandle = setInterval(() => {
-        this.counter += 1;
-        this.$root.$emit("counter-changed", {
-          updatedValue: this.counter,
-          resolve,
-        });
-      }, 1000);
+    this.$root.$on("counter-status", (status) => {
+      this.counterStatus = status;
     });
-    this.$root.$on("counter-ended", () => {
-      clearInterval(this.intervalHandle);
-      this.counter = 0;
-      this.counterStarted = false;
+    this.$root.$on("counter-changed", ({ time, length }) => {
+      this.ownCounter = time.toFixed(0);
+      this.timerLimit = length;
     });
   },
   computed: {
     ...mapGetters(["currentUser"]),
-    counterValue() {
-      return 10 - this.counter > 0 ? 10 - this.counter : 0;
+    remaining() {
+      return this.timerLimit / 1000 - this.ownCounter;
     },
   },
   methods: {
