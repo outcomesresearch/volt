@@ -16,7 +16,9 @@
             Welcome,
             {{ currentUser.fname | truncatedString(20) }}
           </h3>
-          <md-button v-if="currentUser" @click="logout">Log Out</md-button>
+          <md-button v-if="currentUser && !counterStatus" @click="logout"
+            >Log Out</md-button
+          >
         </md-app-toolbar>
         <md-app-content>
           <router-view />
@@ -56,6 +58,7 @@ export default {
   },
   methods: {
     logout() {
+      this.counterStatus = false;
       this.$store.dispatch("LOGOUT").then(() => {
         this.$router.push("/login").catch((r) => console.log(r.message));
       });

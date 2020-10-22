@@ -2,11 +2,16 @@
   <div class="colors-wrapper">
     <md-progress-bar
       md-mode="determinate"
+      v-if="!done"
       :md-value="currentTime * (100 / (limit / 1000))"
     ></md-progress-bar>
     <div class="image-wrapper">
       <div class="resting-banner" v-if="resting">Resting...</div>
-      <img :src="pictures[pictureIndex]" v-else />
+      <img :src="pictures[pictureIndex] && pictures[pictureIndex].src" v-else />
+      <div class="recorded-data" v-if="done">
+        Data recorded for this session:
+        <pre>{{ $store.state.savedData }}</pre>
+      </div>
     </div>
   </div>
 </template>
@@ -19,15 +24,14 @@ export default {
   data() {
     return {
       pictures: [
-        "/images/cedar.jpg",
-        "/images/cloves.jpg",
-        "/images/oranges.jpg",
-        "/images/strawberries.jpg",
+        { name: "cedar", src: "/images/cedar.jpg" },
+        { name: "cloves", src: "/images/cloves.jpg" },
       ],
       pictureIndex: -1,
       currentTime: 0,
       resting: false,
       limit: 10,
+      done: false,
     };
   },
   computed: {
@@ -40,11 +44,17 @@ export default {
         this.$root.$emit("counter-changed", { time: this.currentTime, length });
       }, 1000);
     },
-    longTimer(length, resolve, timerToClear) {
+    longTimer(length, resolve, timerToClear, picIndex) {
       this.limit = length;
       const timer = setTimeout(() => {
         this.currentTime = 0;
         this.resting = !this.resting;
+        if (picIndex > -1) {
+          this.$store.dispatch("SAVEDATA", {
+            key: "odors",
+            value: { [this.pictures[picIndex].name]: new Date() },
+          });
+        }
         clearInterval(timerToClear);
         clearInterval(timer);
         resolve();
@@ -52,18 +62,25 @@ export default {
     },
   },
   async mounted() {
+    console.log(this.$store.state.savedData);
     this.$root.$emit("counter-status", true);
+    this.$store.dispatch("SAVEDATA", {
+      key: "started",
+      value: true,
+    });
     for (let i = 0; i < this.pictures.length; i++) {
       await new Promise((r) => {
         this.pictureIndex = i;
-        this.longTimer(10000, r, this.secTimer(10000));
+        this.longTimer(10000, r, this.secTimer(10000), i);
       });
       await new Promise((r) => {
         this.pictureIndex = -1;
         this.longTimer(5000, r, this.secTimer(5000));
       });
-      if (i === this.pictures.length - 1)
+      if (i === this.pictures.length - 1) {
         this.$root.$emit("counter-status", false);
+        this.done = true;
+      }
     }
   },
 };
@@ -96,5 +113,9 @@ export default {
   line-height: 1;
   background: rgb(230, 230, 230);
   padding: 30px;
+}
+
+.recorded-data > pre {
+  white-space: break-spaces;
 }
 </style>

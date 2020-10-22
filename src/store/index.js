@@ -5,6 +5,7 @@ import FirebaseService from "../services/firebase.service.js";
 Vue.use(Vuex);
 
 const state = {
+  savedData: {},
   currentUser: undefined,
 };
 
@@ -15,6 +16,9 @@ const getters = {
 };
 
 const actions = {
+  SAVEDATA({ commit }, keyValue) {
+    return commit("SET_KEY", keyValue);
+  },
   LOGIN({ commit }, user) {
     return FirebaseService.auth()
       .signInWithEmailAndPassword(user.studyID, "password")
@@ -44,6 +48,12 @@ const actions = {
 const mutations = {
   SET_AUTH(state, user) {
     state.currentUser = user;
+  },
+  SET_KEY(state, { key, value }) {
+    if (!state.savedData[key]) state.savedData[key] = {};
+    state.savedData[key] = Object.keys(value).length
+      ? { ...state.savedData[key], ...value }
+      : value;
   },
   PURGE_AUTH(state) {
     state.currentUser = undefined;

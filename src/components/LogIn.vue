@@ -71,6 +71,13 @@ export default {
         .dispatch("LOGIN", { studyID: this.form.studyID })
         .then((result) => {
           console.log(result);
+          this.$store.dispatch("SAVEDATA", {
+            key: "login",
+            value: {
+              studyID: this.form.studyID,
+              loginTime: new Date(),
+            },
+          });
           return router.push("/");
         })
         .catch((err) => {
