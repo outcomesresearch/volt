@@ -24,8 +24,16 @@ export default {
   data() {
     return {
       pictures: [
-        { name: "cedar", src: "/images/cedar.jpg" },
-        { name: "cloves", src: "/images/cloves.jpg" },
+        {
+          name: "strawberries",
+          src:
+            "https://hips.hearstapps.com/clv.h-cdn.co/assets/15/22/2560x1728/gallery-1432664914-strawberry-facts1.jpg?resize=768:*",
+        },
+        {
+          name: "cloves",
+          src:
+            "https://leavla.com/wp-content/uploads/2019/11/gewuerznelken-cloves-by-k-adobe-103298233.jpg",
+        },
       ],
       pictureIndex: -1,
       currentTime: 0,
