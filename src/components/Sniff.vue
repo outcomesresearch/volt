@@ -7,7 +7,7 @@
     ></md-progress-bar>
     <div class="image-wrapper">
       <div class="resting-banner" v-if="resting">Resting...</div>
-      <img :src="pictures[pictureIndex] && pictures[pictureIndex].src" v-else />
+      <img :src="imgPath" v-else-if="pictureIndex != -1" />
       <div class="recorded-data" v-if="done">
         See you next time! Logging out ...
       </div>
@@ -18,7 +18,6 @@
 <script>
 import { mapGetters } from "vuex";
 import { write } from "../services/firebase.service";
-import images from "../assets/images.json";
 
 export default {
   name: "Sniff",
@@ -34,6 +33,9 @@ export default {
   },
   computed: {
     ...mapGetters(["currentUser"]),
+    imgPath() {
+      return require(`@/assets/images/${this.pictures[this.pictureIndex]}.jpg`);
+    },
   },
   methods: {
     secTimer(length) {
@@ -55,11 +57,9 @@ export default {
     },
   },
   async mounted() {
-    this.pictures = Object.keys(this.currentUser.odors).map((name) => {
-      return { name, src: images[name] };
-    });
+    this.pictures = Object.keys(this.currentUser.odors).map((name) => name);
     const pictureLength = 5000;
-    const restLength = 1000;
+    const restLength = 5000;
 
     write.startedSniffing();
 
