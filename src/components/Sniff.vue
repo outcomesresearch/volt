@@ -9,8 +9,7 @@
       <div class="resting-banner" v-if="resting">Resting...</div>
       <img :src="pictures[pictureIndex] && pictures[pictureIndex].src" v-else />
       <div class="recorded-data" v-if="done">
-        Data recorded for this session:
-        <pre>{{ $store.state.savedData }}</pre>
+        See you next time! Logging out ...
       </div>
     </div>
   </div>
@@ -18,6 +17,7 @@
 
 <script>
 import { mapGetters } from "vuex";
+import { write } from "../services/firebase.service";
 
 export default {
   name: "Sniff",
@@ -52,17 +52,11 @@ export default {
         this.$root.$emit("counter-changed", { time: this.currentTime, length });
       }, 1000);
     },
-    longTimer(length, resolve, timerToClear, picIndex) {
+    longTimer(length, resolve, timerToClear) {
       this.limit = length;
       const timer = setTimeout(() => {
         this.currentTime = 0;
         this.resting = !this.resting;
-        if (picIndex > -1) {
-          this.$store.dispatch("SAVEDATA", {
-            key: "odors",
-            value: { [this.pictures[picIndex].name]: new Date() },
-          });
-        }
         clearInterval(timerToClear);
         clearInterval(timer);
         resolve();
@@ -70,24 +64,25 @@ export default {
     },
   },
   async mounted() {
-    console.log(this.$store.state.savedData);
+    write.startedSniffing();
+
     this.$root.$emit("counter-status", true);
-    this.$store.dispatch("SAVEDATA", {
-      key: "started",
-      value: true,
-    });
     for (let i = 0; i < this.pictures.length; i++) {
       await new Promise((r) => {
         this.pictureIndex = i;
-        this.longTimer(10000, r, this.secTimer(10000), i);
+        this.longTimer(10000, r, this.secTimer(10000));
       });
       await new Promise((r) => {
         this.pictureIndex = -1;
         this.longTimer(5000, r, this.secTimer(5000));
       });
+
+      write.recordOdor(this.pictures[i].name);
+
       if (i === this.pictures.length - 1) {
         this.$root.$emit("counter-status", false);
         this.done = true;
+        setTimeout(this.$root.$children[0].logout, 1000);
       }
     }
   },

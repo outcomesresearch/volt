@@ -1,24 +1,15 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import FirebaseService from "../services/firebase.service.js";
-import store from "../store/";
+import { auth, write } from "../services/firebase.service.js";
 
 Vue.use(VueRouter);
 
-const beforeEnter = function(to, from, next) {
-  FirebaseService.auth().onAuthStateChanged(function(user) {
-    if (user) {
-      FirebaseService.database()
-        .ref()
-        .on("value", function(data) {
-          const acct = data.val().notes.users[user.uid];
-          store.commit("SET_AUTH", acct);
-          return next();
-        });
-    } else {
-      return next("/login");
-    }
-  });
+const beforeEnter = async function(to, from, next) {
+  auth
+    .checkAuthentication()
+    .then(write.authenticatedSelf)
+    .then(next)
+    .catch(() => next("/login"));
 };
 
 const routes = [
@@ -32,7 +23,10 @@ const routes = [
     path: `/sniff`,
     name: `sniff-exercise`,
     component: () => import(`@/components/Sniff.vue`),
-    beforeEnter,
+    beforeEnter: async function(to, from, next) {
+      if (!from.name) beforeEnter(to, from, next);
+      else next();
+    },
   },
   {
     path: "/login",

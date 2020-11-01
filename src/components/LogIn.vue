@@ -47,6 +47,8 @@
 </template>
 
 <script>
+import { auth } from "../services/firebase.service";
+
 export default {
   name: "login-view",
   data() {
@@ -66,19 +68,10 @@ export default {
   },
   methods: {
     signin() {
-      const router = this.$router;
-      this.$store
-        .dispatch("LOGIN", { studyID: this.form.studyID })
-        .then((result) => {
-          console.log(result);
-          this.$store.dispatch("SAVEDATA", {
-            key: "login",
-            value: {
-              studyID: this.form.studyID,
-              loginTime: new Date(),
-            },
-          });
-          return router.push("/");
+      auth
+        .login(this.form.studyID)
+        .then(() => {
+          this.$router.push("/");
         })
         .catch((err) => {
           // Show snackbar with error on sign in failure

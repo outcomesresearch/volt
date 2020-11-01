@@ -30,6 +30,7 @@
 
 <script>
 import { mapGetters } from "vuex";
+import { auth, write } from "./services/firebase.service";
 
 export default {
   name: "App",
@@ -59,9 +60,14 @@ export default {
   methods: {
     logout() {
       this.counterStatus = false;
-      this.$store.dispatch("LOGOUT").then(() => {
-        this.$router.push("/login").catch((r) => console.log(r.message));
-      });
+
+      write
+        .logout()
+        .then(auth.logout)
+        .then(() => {
+          this.$store.dispatch("LOGOUT");
+          this.$router.push("/login").catch((r) => console.log(r.message));
+        });
     },
   },
 };
