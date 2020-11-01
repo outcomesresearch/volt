@@ -18,23 +18,13 @@
 <script>
 import { mapGetters } from "vuex";
 import { write } from "../services/firebase.service";
+import images from "../assets/images.json";
 
 export default {
   name: "Sniff",
   data() {
     return {
-      pictures: [
-        {
-          name: "strawberries",
-          src:
-            "https://hips.hearstapps.com/clv.h-cdn.co/assets/15/22/2560x1728/gallery-1432664914-strawberry-facts1.jpg?resize=768:*",
-        },
-        {
-          name: "cloves",
-          src:
-            "https://leavla.com/wp-content/uploads/2019/11/gewuerznelken-cloves-by-k-adobe-103298233.jpg",
-        },
-      ],
+      pictures: [],
       pictureIndex: -1,
       currentTime: 0,
       resting: false,
@@ -65,8 +55,11 @@ export default {
     },
   },
   async mounted() {
-    const pictureLength = 10000;
-    const restLength = 5000;
+    this.pictures = Object.keys(this.currentUser.odors).map((name) => {
+      return { name, src: images[name] };
+    });
+    const pictureLength = 5000;
+    const restLength = 1000;
 
     write.startedSniffing();
 
