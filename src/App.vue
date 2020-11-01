@@ -14,11 +14,11 @@
           </div>
           <h3 v-if="currentUser" class="md-title">
             Welcome,
-            {{ currentUser.fname | truncatedString(20) }}
+            {{ currentUser.fname | truncatedString(17) }}
           </h3>
-          <md-button v-if="currentUser && !counterStatus" @click="logout"
+          <!-- <md-button v-if="currentUser && !counterStatus" @click="logout"
             >Log Out</md-button
-          >
+          > -->
         </md-app-toolbar>
         <md-app-content>
           <router-view />
@@ -76,6 +76,8 @@ export default {
 <style lang="scss">
 @import "@/assets/App.scss";
 
+$washuLogoWidth: 252px;
+
 #app {
   height: 100%;
 }
@@ -93,10 +95,11 @@ body {
 .md-app {
   min-height: 100vh;
   border: none;
+  overflow: hidden;
 }
 
 .washu-branding {
-  width: 252px;
+  width: $washuLogoWidth;
   max-height: 25px;
   vertical-align: bottom;
   margin: 0.55em 0;
@@ -111,5 +114,18 @@ body {
   font-size: 16px;
   margin-left: auto;
   margin-right: auto;
+}
+
+@media (max-width: 500px) {
+  .washu-branding {
+    margin-right: calc(100% - #{$washuLogoWidth});
+  }
+  h3.md-title {
+    margin-left: 0px !important;
+  }
+
+  .counter {
+    margin-left: 0px;
+  }
 }
 </style>

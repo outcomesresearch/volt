@@ -47,6 +47,7 @@ export default {
   },
   methods: {
     secTimer(length) {
+      this.$root.$emit("counter-changed", { time: this.currentTime, length });
       return setInterval(() => {
         this.currentTime += 1;
         this.$root.$emit("counter-changed", { time: this.currentTime, length });
@@ -64,17 +65,20 @@ export default {
     },
   },
   async mounted() {
+    const pictureLength = 10000;
+    const restLength = 5000;
+
     write.startedSniffing();
 
     this.$root.$emit("counter-status", true);
     for (let i = 0; i < this.pictures.length; i++) {
       await new Promise((r) => {
         this.pictureIndex = i;
-        this.longTimer(10000, r, this.secTimer(10000));
+        this.longTimer(pictureLength, r, this.secTimer(pictureLength));
       });
       await new Promise((r) => {
         this.pictureIndex = -1;
-        this.longTimer(5000, r, this.secTimer(5000));
+        this.longTimer(restLength, r, this.secTimer(restLength));
       });
 
       write.recordOdor(this.pictures[i].name);

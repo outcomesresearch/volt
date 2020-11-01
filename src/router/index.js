@@ -15,7 +15,7 @@ const beforeEnter = async function(to, from, next) {
 const routes = [
   {
     path: `/`,
-    name: `error-404`,
+    name: `landing-page`,
     component: () => import(`@/components/Colors.vue`),
     beforeEnter,
   },
