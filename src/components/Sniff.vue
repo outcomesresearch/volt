@@ -74,7 +74,7 @@ export default {
         this.longTimer(restLength, r, this.secTimer(restLength));
       });
 
-      write.recordOdor(this.pictures[i].name);
+      write.recordOdor(this.pictures[i]);
 
       if (i === this.pictures.length - 1) {
         this.$root.$emit("counter-status", false);
