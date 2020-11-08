@@ -46,15 +46,15 @@ export default {
     this.$root.$on("counter-status", (status) => {
       this.counterStatus = status;
     });
-    this.$root.$on("counter-changed", ({ time, length }) => {
-      this.ownCounter = time.toFixed(0);
-      this.timerLimit = length;
+    this.$root.$on("counter-changed", ({ count, steps }) => {
+      this.ownCounter = count.toFixed(0);
+      this.timerLimit = steps;
     });
   },
   computed: {
     ...mapGetters(["currentUser"]),
     remaining() {
-      return this.timerLimit / 1000 - this.ownCounter;
+      return this.timerLimit - this.ownCounter;
     },
   },
   methods: {

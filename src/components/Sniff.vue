@@ -3,7 +3,7 @@
     <md-progress-bar
       md-mode="determinate"
       v-if="!done"
-      :md-value="currentTime * (100 / (limit / 1000))"
+      :md-value="progressBarCount * (100 / progressBarSteps)"
     ></md-progress-bar>
     <div class="image-wrapper">
       <div class="resting-banner" v-if="resting">Resting...</div>
@@ -25,9 +25,9 @@ export default {
     return {
       pictures: [],
       pictureIndex: -1,
-      currentTime: 0,
       resting: false,
-      limit: 10,
+      progressBarSteps: 10,
+      progressBarCount: 0,
       done: false,
     };
   },
@@ -38,22 +38,34 @@ export default {
     },
   },
   methods: {
-    secTimer(length) {
-      this.$root.$emit("counter-changed", { time: this.currentTime, length });
-      return setInterval(() => {
-        this.currentTime += 1;
-        this.$root.$emit("counter-changed", { time: this.currentTime, length });
-      }, 1000);
+    doTimer(length, resolution, oninstance, oncomplete) {
+      let steps = (length / 100) * (resolution / 10);
+      let speed = length / steps;
+      let count = 0;
+      let start = new Date().getTime();
+
+      function instance() {
+        if (count++ == steps) {
+          oncomplete(steps, count);
+        } else {
+          oninstance(steps, count);
+
+          let diff = new Date().getTime() - start - count * speed;
+          setTimeout(instance, speed - diff);
+        }
+      }
+      setTimeout(instance, speed);
+      oninstance(steps, count);
     },
-    longTimer(length, resolve, timerToClear) {
-      this.limit = length;
-      const timer = setTimeout(() => {
-        this.currentTime = 0;
-        this.resting = !this.resting;
-        clearInterval(timerToClear);
-        clearInterval(timer);
-        resolve();
-      }, length);
+
+    secTimer(steps, count) {
+      this.$root.$emit("counter-changed", { count, steps });
+      this.progressBarCount = count;
+      this.progressBarSteps = steps;
+    },
+    longTimer(resolve) {
+      this.resting = !this.resting;
+      resolve();
     },
   },
   async mounted() {
@@ -67,11 +79,11 @@ export default {
     for (let i = 0; i < this.pictures.length; i++) {
       await new Promise((r) => {
         this.pictureIndex = i;
-        this.longTimer(pictureLength, r, this.secTimer(pictureLength));
+        this.doTimer(pictureLength, 1, this.secTimer, () => this.longTimer(r));
       });
       await new Promise((r) => {
         this.pictureIndex = -1;
-        this.longTimer(restLength, r, this.secTimer(restLength));
+        this.doTimer(restLength, 1, this.secTimer, () => this.longTimer(r));
       });
 
       write.recordOdor(this.pictures[i]);
