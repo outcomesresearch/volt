@@ -34,7 +34,9 @@ export default {
   computed: {
     ...mapGetters(["currentUser"]),
     imgPath() {
-      return require(`@/assets/images/${this.pictures[this.pictureIndex]}.jpg`);
+      return this.pictures[this.pictureIndex]
+        ? require(`@/assets/images/${this.pictures[this.pictureIndex]}.jpg`)
+        : "";
     },
   },
   methods: {
@@ -67,6 +69,11 @@ export default {
       this.resting = !this.resting;
       resolve();
     },
+  },
+  beforeRouteLeave(to, from, next) {
+    this.pictures = [];
+    this.$root.$emit("counter-status", false);
+    return next();
   },
   async mounted() {
     this.pictures = Object.keys(this.currentUser.odors).map((name) => name);
