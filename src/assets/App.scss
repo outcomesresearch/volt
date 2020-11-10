@@ -1,10 +1,12 @@
 @import "~vue-material/dist/theme/engine"; // Import the theme engine
 
+$content-width: 71em;
+
 @include md-register-theme(
   "default",
   (
     primary: #a51417,
-    accent: #ACCEF7,
+    accent: #accef7,
   )
 );
 

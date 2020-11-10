@@ -75,6 +75,8 @@ export default {
 
 <style lang="scss">
 @import "@/assets/App.scss";
+@import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap");
 
 $washuLogoWidth: 252px;
 
@@ -87,6 +89,7 @@ body {
   margin: 0;
   padding: 0;
   height: 100%;
+  font-family: "Source Sans Pro" !important;
 }
 
 .page-container {
@@ -110,13 +113,39 @@ body {
   font-size: 16px !important;
 }
 
+.md-toolbar.md-app-toolbar.md-primary.md-dense.md-theme-default.md-elevation-4.md-no-elevation {
+  padding-left: calc(calc(100% - #{$content-width}) / 2);
+  padding-right: calc(calc(100% - #{$content-width}) / 2);
+}
+
+.md-button-content {
+  font-weight: bold;
+}
+
 .counter {
   font-size: 16px;
   margin-left: auto;
   margin-right: auto;
 }
 
+h1 {
+  font-weight: 300;
+  line-height: 1;
+  font-family: "Libre Baskerville", "Times New Roman", serif;
+}
+
+@media (max-width: 71em) {
+  .md-toolbar.md-app-toolbar.md-primary.md-dense.md-theme-default.md-elevation-4.md-no-elevation {
+    padding: 0px 8px;
+  }
+  .toolbar {
+    max-width: unset !important;
+  }
+}
+
 @media (max-width: 500px) {
+  @import "@/assets/ColorComponentMobile.scss";
+
   .washu-branding {
     margin-right: calc(100% - #{$washuLogoWidth});
   }
