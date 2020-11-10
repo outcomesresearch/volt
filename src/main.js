@@ -38,6 +38,7 @@ Vue.filter("truncatedString", function(value, size) {
 
 Vue.use(VueRouter);
 Vue.config.productionTip = false;
+document.title = "Smell Training Clinical Trial";
 
 export default new Vue({
   render: (h) => h(App),
