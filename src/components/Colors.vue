@@ -1,11 +1,6 @@
 <template>
   <div>
-    <div class="toolbar">
-      <span class="red-banner"
-        >Department of Otolaryngology - Clinical Outcomes Research Office</span
-      >
-      <h1>Smell Training Clinical Trial</h1>
-    </div>
+    <volt-header />
     <div class="full-bleed-hero">
       <!-- <img src="@/assets/hello-cellphone.jpg" /> -->
     </div>
@@ -28,14 +23,18 @@
     <div class="start-button md-primary">
       <md-button @click="startExercise">Start</md-button>
     </div>
+    <volt-footer />
   </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
+import VoltHeader from "./Header.vue";
+import VoltFooter from "./Footer.vue";
 
 export default {
   name: "colors",
+  components: { VoltHeader, VoltFooter },
   computed: {
     ...mapGetters(["currentUser"]),
   },
@@ -60,22 +59,6 @@ $radius-small: 3px;
 
 .start-button button {
   background-color: rgba(0, 0, 0, 0.075);
-}
-
-.toolbar {
-  max-width: 71em;
-  min-height: 30px;
-  margin: auto;
-}
-.red-banner {
-  color: #d01c29;
-  font-weight: bold;
-  text-transform: uppercase;
-}
-
-h1 {
-  line-height: 1;
-  font-family: "Libre Baskerville", "Times New Roman", serif;
 }
 
 .full-bleed-hero {

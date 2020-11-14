@@ -113,6 +113,12 @@ body {
   font-size: 16px !important;
 }
 
+.md-app-content {
+  height: calc(100% - 48px);
+  overflow-y: hidden;
+  border: none;
+}
+
 .md-toolbar.md-app-toolbar.md-primary.md-dense.md-theme-default.md-elevation-4.md-no-elevation {
   padding-left: calc(calc(100% - #{$content-width}) / 2);
   padding-right: calc(calc(100% - #{$content-width}) / 2);
@@ -134,12 +140,23 @@ h1 {
   font-family: "Libre Baskerville", "Times New Roman", serif;
 }
 
+.toolbar {
+  width: 71em;
+  min-height: 30px;
+  margin: auto;
+}
+
 @media (max-width: 71em) {
   .md-toolbar.md-app-toolbar.md-primary.md-dense.md-theme-default.md-elevation-4.md-no-elevation {
     padding: 0px 8px;
   }
   .toolbar {
+    width: 100%;
     max-width: unset !important;
+
+    & .footer {
+      padding: 1em 16px !important;
+    }
   }
 }
 
@@ -155,6 +172,13 @@ h1 {
 
   .counter {
     margin-left: 0px;
+  }
+
+  .footer {
+    text-align: center;
+  }
+  .footer-copyright {
+    text-align: left;
   }
 }
 </style>
