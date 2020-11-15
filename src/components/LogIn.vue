@@ -77,10 +77,15 @@ export default {
     signin() {
       auth
         .login(this.form.studyID)
+        .then(auth.checkAuthentication)
         .then(() => {
           this.$router.push("/");
         })
         .catch((err) => {
+          if (err.message.includes("permission_denied")) {
+            err.message = `Can't log in (no permissions to the database). Please contact amish.khan@wustl.edu.`;
+          }
+
           // Show snackbar with error on sign in failure
           this.snackBarMessage = err.message;
           this.userSaved = true;

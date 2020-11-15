@@ -23,9 +23,12 @@ export const auth = {
     return new Promise((res, rej) => {
       initializedApp.auth().onAuthStateChanged(async function(user) {
         if (user) {
-          const acct = await read(user.uid);
-          store.dispatch("SET_AUTH_ACTION", { id: user.uid, ...acct });
-          res();
+          read(user.uid)
+            .then((acct) => {
+              store.dispatch("SET_AUTH_ACTION", { id: user.uid, ...acct });
+              res();
+            })
+            .catch(rej);
         } else {
           rej();
         }
@@ -35,14 +38,11 @@ export const auth = {
 };
 
 export function read(key) {
-  return new Promise((res) => {
+  return new Promise((res, rej) => {
     initializedApp
       .database()
       .ref(key)
-      .once("value", function(data) {
-        const acct = data.val();
-        res(acct);
-      });
+      .once("value", (data) => res(data.val()), rej);
   });
 }
 

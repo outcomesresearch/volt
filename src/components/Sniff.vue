@@ -40,6 +40,11 @@ export default {
     },
   },
   methods: {
+    endSniffing() {
+      this.pictures = [];
+      this.$root.$emit("counter-status", false);
+      this.done = true;
+    },
     doTimer(length, resolution, oninstance, oncomplete) {
       let steps = (length / 100) * (resolution / 10);
       let speed = length / steps;
@@ -71,8 +76,7 @@ export default {
     },
   },
   beforeRouteLeave(to, from, next) {
-    this.pictures = [];
-    this.$root.$emit("counter-status", false);
+    this.endSniffing();
     return next();
   },
   async mounted() {
@@ -93,12 +97,11 @@ export default {
         this.doTimer(restLength, 1, this.secTimer, () => this.longTimer(r));
       });
 
-      write.recordOdor(this.pictures[i]);
+      if (!this.done) write.recordOdor(this.pictures[i]);
 
       if (i === this.pictures.length - 1) {
-        this.$root.$emit("counter-status", false);
-        this.done = true;
-        setTimeout(this.$root.$children[0].logout, 1000);
+        this.endSniffing();
+        setTimeout(() => this.$router.push("/"), 1000);
       }
     }
   },

@@ -38,7 +38,8 @@ const mutations = {
     state.currentUser = user;
   },
   SESSION_KEY(state, value) {
-    if (!state.sessionKey) state.sessionKey = value;
+    // Allow value to be overriden if it's undefined (a reset)
+    if (!state.sessionKey || !value) state.sessionKey = value;
   },
   SET_KEY(state, { key, value }) {
     if (!state.savedData[key]) state.savedData[key] = {};
