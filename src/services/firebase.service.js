@@ -92,19 +92,21 @@ export const write = {
     }
   },
 
-  logout: function() {
-    return new Promise((res) => {
-      if (store.getters.currentUser) {
-        const ref = initializedApp.database().ref(store.getters.currentUser.id);
-        const sessionKey = store.getters.sessionKey;
-        ref
-          .child("sessions")
-          .child(sessionKey)
-          .update({ logoutTime: Date.now() });
+  // logout: function() {
+  //   return new Promise((res) => {
+  //     console.log(store.getters.sessionKey);
+  //     if (store.getters.currentUser) {
+  //       const ref = initializedApp.database().ref(store.getters.currentUser.id);
+  //       const sessionKey = store.getters.sessionKey;
+  //       ref
+  //         .child("sessions")
+  //         .child(sessionKey)
+  //         .update({ logoutTime: Date.now() });
 
-        ref.off();
-        res();
-      }
-    });
-  },
+  //       ref.off();
+  //       console.log("resolved");
+  //       res();
+  //     }
+  //   });
+  // },
 };

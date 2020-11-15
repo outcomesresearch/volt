@@ -16,9 +16,9 @@
             Welcome,
             {{ currentUser.fname | truncatedString(17) }}
           </h3>
-          <!-- <md-button v-if="currentUser && !counterStatus" @click="logout"
+          <md-button v-if="currentUser && !counterStatus" @click="logout"
             >Log Out</md-button
-          > -->
+          >
         </md-app-toolbar>
         <md-app-content>
           <router-view />
@@ -30,7 +30,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { auth, write } from "./services/firebase.service";
+import { auth } from "./services/firebase.service";
 
 export default {
   name: "App",
@@ -60,14 +60,10 @@ export default {
   methods: {
     logout() {
       this.counterStatus = false;
-
-      write
-        .logout()
-        .then(auth.logout)
-        .then(() => {
-          this.$store.dispatch("LOGOUT");
-          this.$router.push("/login").catch((r) => console.log(r.message));
-        });
+      auth.logout().then(() => {
+        this.$store.dispatch("LOGOUT");
+        this.$router.push("/login").catch((r) => console.log(r.message));
+      });
     },
   },
 };
