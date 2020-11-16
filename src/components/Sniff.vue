@@ -8,9 +8,6 @@
     <div class="image-wrapper">
       <div class="resting-banner" v-if="resting">Resting...</div>
       <img :src="imgPath" v-else-if="pictureIndex != -1" />
-      <div class="recorded-data" v-if="done">
-        See you next time! Logging out ...
-      </div>
     </div>
   </div>
 </template>
@@ -101,7 +98,7 @@ export default {
 
       if (i === this.pictures.length - 1) {
         this.endSniffing();
-        setTimeout(() => this.$router.push("/"), 1000);
+        setTimeout(() => this.$router.push("/"), 500);
       }
     }
   },

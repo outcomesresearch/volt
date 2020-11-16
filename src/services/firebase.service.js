@@ -1,6 +1,10 @@
 import firebase from "firebase";
 import store from "../store/";
 
+const getDate = () => {
+  return new Date().toString();
+};
+
 const firebaseConfig = {
   apiKey: process.env.VUE_APP_API_KEY,
   projectId: process.env.VUE_APP_PROJECTID,
@@ -56,7 +60,7 @@ export const write = {
         const ref = initializedApp.database().ref(store.getters.currentUser.id);
         const sessionKey = ref.child("sessions").push({
           studyID: store.getters.currentUser.id,
-          loginTime: Date.now(),
+          loginTime: getDate(),
         }).key;
         store.dispatch("SET_SESSION_KEY", sessionKey);
         ref.off();
@@ -87,7 +91,7 @@ export const write = {
         .child("sessions")
         .child(sessionKey)
         .child("odors")
-        .update({ [odor]: Date.now() });
+        .update({ [odor]: getDate() });
       ref.off();
     }
   },
