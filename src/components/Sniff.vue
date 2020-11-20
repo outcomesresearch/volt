@@ -3,8 +3,8 @@
     <div class="resting-banner" v-if="resting">Resting...</div>
     <img :src="imgPath" v-else-if="pictureIndex != -1" />
     <div class="pause" @click="handlePause" v-if="!done">
-      <img v-show="!paused" src="@/assets/pause-button.svg" />
-      <img v-show="paused" src="@/assets/play-button.svg" />
+      <img v-show="!paused" :src="require(`@/assets/pause-button.svg`)" />
+      <img v-show="paused" :src="require(`@/assets/play-button.svg`)" />
     </div>
   </div>
 </template>
