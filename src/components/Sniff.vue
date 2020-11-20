@@ -1,13 +1,10 @@
 <template>
-  <div class="colors-wrapper">
-    <md-progress-bar
-      md-mode="determinate"
-      v-if="!done"
-      :md-value="progressBarCount * (100 / progressBarSteps)"
-    ></md-progress-bar>
-    <div class="image-wrapper">
-      <div class="resting-banner" v-if="resting">Resting...</div>
-      <img :src="imgPath" v-else-if="pictureIndex != -1" />
+  <div class="image-wrapper" ref="sniffComponent">
+    <div class="resting-banner" v-if="resting">Resting...</div>
+    <img :src="imgPath" v-else-if="pictureIndex != -1" />
+    <div class="pause" @click="handlePause" v-if="!done">
+      <img v-show="!paused" src="@/assets/pause-button.svg" />
+      <img v-show="paused" src="@/assets/play-button.svg" />
     </div>
   </div>
 </template>
@@ -23,8 +20,7 @@ export default {
       pictures: [],
       pictureIndex: -1,
       resting: false,
-      progressBarSteps: 10,
-      progressBarCount: 0,
+      paused: false,
       done: false,
     };
   },
@@ -42,34 +38,9 @@ export default {
       this.$root.$emit("counter-status", false);
       this.done = true;
     },
-    doTimer(length, resolution, oninstance, oncomplete) {
-      let steps = (length / 100) * (resolution / 10);
-      let speed = length / steps;
-      let count = 0;
-      let start = new Date().getTime();
-
-      function instance() {
-        if (count++ == steps) {
-          oncomplete(steps, count);
-        } else {
-          oninstance(steps, count);
-
-          let diff = new Date().getTime() - start - count * speed;
-          setTimeout(instance, speed - diff);
-        }
-      }
-      setTimeout(instance, speed);
-      oninstance(steps, count);
-    },
-
-    secTimer(steps, count) {
-      this.$root.$emit("counter-changed", { count, steps });
-      this.progressBarCount = count;
-      this.progressBarSteps = steps;
-    },
-    longTimer(resolve) {
-      this.resting = !this.resting;
-      resolve();
+    handlePause() {
+      this.paused = !this.paused;
+      this.$root.$emit("pause");
     },
   },
   beforeRouteLeave(to, from, next) {
@@ -78,20 +49,25 @@ export default {
   },
   async mounted() {
     this.pictures = Object.keys(this.currentUser.odors).map((name) => name);
-    const pictureLength = 5000;
-    const restLength = 5000;
+    let resolve = () => {};
+
+    this.$root.$on("timer-done", () => {
+      this.resting = !this.resting;
+      resolve();
+    });
 
     write.startedSniffing();
 
-    this.$root.$emit("counter-status", true);
     for (let i = 0; i < this.pictures.length; i++) {
+      // Resolve these promises timer-done event is emitted on root
       await new Promise((r) => {
         this.pictureIndex = i;
-        this.doTimer(pictureLength, 1, this.secTimer, () => this.longTimer(r));
+        resolve = r;
+        this.$root.$emit("start-timer", 5);
       });
       await new Promise((r) => {
-        this.pictureIndex = -1;
-        this.doTimer(restLength, 1, this.secTimer, () => this.longTimer(r));
+        resolve = r;
+        this.$root.$emit("start-timer", 5);
       });
 
       if (!this.done) write.recordOdor(this.pictures[i]);
@@ -136,5 +112,13 @@ export default {
 
 .recorded-data > pre {
   white-space: break-spaces;
+}
+
+.pause {
+  max-width: 50px;
+  opacity: 50%;
+  margin: auto;
+  margin-top: 20px;
+  cursor: pointer;
 }
 </style>

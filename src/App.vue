@@ -10,7 +10,13 @@
         University in St. Louis"
           />
           <div class="counter">
-            <span v-if="counterStatus">{{ remaining }} sec remaining</span>
+            <volt-timer
+              @counter-value="progress = $event"
+              v-if="counterStatus"
+              :key="timerRefreshKey"
+              :limit="limit"
+              :pause="pause"
+            />
           </div>
           <h3 v-if="currentUser" class="md-title">
             Welcome,
@@ -21,6 +27,12 @@
           >
         </md-app-toolbar>
         <md-app-content>
+          <md-progress-bar
+            style="margin: -17px -16px 0px -17px"
+            md-mode="determinate"
+            :md-value="(progress / limit) * 100"
+            v-if="counterStatus"
+          ></md-progress-bar>
           <router-view />
         </md-app-content>
       </md-app>
@@ -31,31 +43,37 @@
 <script>
 import { mapGetters } from "vuex";
 import { auth } from "./services/firebase.service";
+import VoltTimer from "./components/Timer";
 
 export default {
   name: "App",
+  components: { VoltTimer },
   data() {
     return {
       counterStatus: false,
       intervalHandle: undefined,
-      ownCounter: 0,
-      timerLimit: 10000,
+      timerRefreshKey: 0,
+      progress: 0,
+      limit: 10,
+      pause: false,
     };
   },
   mounted() {
-    this.$root.$on("counter-status", (status) => {
-      this.counterStatus = status;
+    this.$root.$on("start-timer", async (limit) => {
+      this.counterStatus = true;
+      this.progress = 0;
+      this.timerRefreshKey += 1;
+      this.limit = limit;
     });
-    this.$root.$on("counter-changed", ({ count, steps }) => {
-      this.ownCounter = count.toFixed(0);
-      this.timerLimit = steps;
+
+    this.$root.$on("pause", () => {
+      this.pause = !this.pause;
     });
+
+    this.$root.$on("counter-status", (status) => (this.counterStatus = status));
   },
   computed: {
     ...mapGetters(["currentUser"]),
-    remaining() {
-      return this.timerLimit - this.ownCounter;
-    },
   },
   methods: {
     logout() {
@@ -112,7 +130,7 @@ body {
 .md-app-content {
   height: calc(100% - 48px);
   overflow-y: hidden;
-  border: none;
+  border: none !important;
 }
 
 .md-toolbar.md-app-toolbar.md-primary.md-dense.md-theme-default.md-elevation-4.md-no-elevation {
