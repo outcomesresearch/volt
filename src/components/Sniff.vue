@@ -3,8 +3,8 @@
     <div class="resting-banner" v-if="resting">Resting...</div>
     <img :src="imgPath" v-else-if="pictureIndex != -1" />
     <div class="pause" @click="handlePause" v-if="!done">
-      <img v-show="!paused" :src="require(`@/assets/pause-button.svg`)" />
-      <img v-show="paused" :src="require(`@/assets/play-button.svg`)" />
+      <img v-show="!paused" :src="pausePath" />
+      <img v-show="paused" :src="playPath" />
     </div>
   </div>
 </template>
@@ -26,6 +26,12 @@ export default {
   },
   computed: {
     ...mapGetters(["currentUser"]),
+    pausePath() {
+      return require(`@/assets/pause-button.svg`);
+    },
+    playPath() {
+      return require(`@/assets/play-button.svg`);
+    },
     imgPath() {
       return this.pictures[this.pictureIndex]
         ? require(`@/assets/images/${this.pictures[this.pictureIndex]}.jpg`)
