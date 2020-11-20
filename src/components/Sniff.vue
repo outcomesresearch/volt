@@ -122,7 +122,6 @@ export default {
 
 .pause {
   max-width: 50px;
-  opacity: 50%;
   margin: auto;
   margin-top: 20px;
   cursor: pointer;
