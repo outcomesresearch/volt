@@ -22,7 +22,10 @@
             Welcome,
             {{ currentUser.fname | truncatedString(17) }}
           </h3>
-          <md-button v-if="currentUser && !counterStatus" @click="logout"
+          <md-button
+            class="log-out-button"
+            v-if="currentUser && !counterStatus"
+            @click="logout"
             >Log Out</md-button
           >
         </md-app-toolbar>
@@ -182,6 +185,11 @@ h1 {
   }
   h3.md-title {
     margin-left: 0px !important;
+  }
+
+  .log-out-button {
+    margin-left: auto !important;
+    margin-right: 0px !important;
   }
 
   .counter {
