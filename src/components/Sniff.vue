@@ -1,8 +1,17 @@
 <template>
-  <div class="image-wrapper" ref="sniffComponent">
-    <div class="resting-banner" v-if="resting">Resting...</div>
-    <img :src="imgPath" v-else-if="pictureIndex != -1" />
-    <div class="pause" @click="handlePause" v-if="!done">
+  <div class="image-wrapper" ref="sniffComponent" v-if="!done">
+    <div class="smelling-banner" v-show="paused">Paused</div>
+    <div v-show="!paused">
+      <div class="resting-banner" v-show="resting">Resting...</div>
+      <div v-show="!resting && pictureIndex != -1">
+        <div class="smelling-banner">Smelling {{ pictures[pictureIndex] }}</div>
+        <img
+          v-show="currentUser.studyArm === 'photo' && !paused"
+          :src="imgPath"
+        />
+      </div>
+    </div>
+    <div class="controls" @click="handlePause">
       <img v-show="!paused" :src="pausePath" />
       <img v-show="paused" :src="playPath" />
     </div>
@@ -102,25 +111,34 @@ export default {
   max-width: 800px;
   margin: auto;
 }
-.image-wrapper > img {
+.image-wrapper img {
   border-radius: 10px;
 }
+
+.smelling-banner,
 .resting-banner {
   font-size: 30px;
   font-weight: 600;
-  border-radius: 10px;
-  color: rgb(150, 150, 150);
   text-align: center;
   line-height: 1;
-  background: rgb(230, 230, 230);
+  color: rgb(150, 150, 150);
+}
+.smelling-banner {
+  font-style: italic;
+  padding: 10px;
+}
+
+.resting-banner {
   padding: 30px;
+  border-radius: 10px;
+  background: rgb(230, 230, 230);
 }
 
 .recorded-data > pre {
   white-space: break-spaces;
 }
 
-.pause {
+.controls {
   max-width: 50px;
   margin: auto;
   margin-top: 20px;

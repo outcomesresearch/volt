@@ -13,7 +13,10 @@
         </li>
         <li>
           Sniff each scent for 10 seconds, twice daily, once in the morning and
-          once in evening, while looking at the photo of the odor.
+          once in evening<span
+            v-if="currentUser && currentUser.studyArm === 'photo'"
+            >, while looking at the photo of the odor</span
+          >.
         </li>
         <li>
           Take 30 seconds of rest between each scent.
