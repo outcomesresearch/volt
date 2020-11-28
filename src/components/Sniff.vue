@@ -12,8 +12,8 @@
       </div>
     </div>
     <div class="controls" @click="handlePause">
-      <img v-show="!paused" :src="pausePath" />
-      <img v-show="paused" :src="playPath" />
+      <img v-show="!paused" :src="require(`@/assets/pause-button.svg`)" />
+      <img v-show="paused" :src="require(`@/assets/play-button.svg`)" />
     </div>
   </div>
 </template>
@@ -26,6 +26,7 @@ export default {
   name: "Sniff",
   data() {
     return {
+      sessionEndReason: "close-refresh",
       pictures: [],
       pictureIndex: -1,
       resting: false,
@@ -35,12 +36,6 @@ export default {
   },
   computed: {
     ...mapGetters(["currentUser"]),
-    pausePath() {
-      return require(`@/assets/pause-button.svg`);
-    },
-    playPath() {
-      return require(`@/assets/play-button.svg`);
-    },
     imgPath() {
       return this.pictures[this.pictureIndex]
         ? require(`@/assets/images/${this.pictures[this.pictureIndex]}.jpg`)
@@ -51,6 +46,8 @@ export default {
     endSniffing() {
       this.pictures = [];
       this.$root.$emit("counter-status", false);
+      write.recordSessionEndReason(this.sessionEndReason);
+      write.recordSessionEnd();
       this.done = true;
     },
     handlePause() {
@@ -63,6 +60,8 @@ export default {
     return next();
   },
   async mounted() {
+    window.addEventListener("beforeunload", this.endSniffing);
+
     this.pictures = Object.keys(this.currentUser.odors).map((name) => name);
     let resolve = () => {};
 
@@ -70,8 +69,6 @@ export default {
       this.resting = !this.resting;
       resolve();
     });
-
-    write.startedSniffing();
 
     for (let i = 0; i < this.pictures.length; i++) {
       // Resolve these promises timer-done event is emitted on root
@@ -88,7 +85,9 @@ export default {
       if (!this.done) write.recordOdor(this.pictures[i]);
 
       if (i === this.pictures.length - 1) {
+        this.sessionEndReason = "completed";
         this.endSniffing();
+        window.removeEventListener("beforeunload", this.endSniffing);
         setTimeout(() => this.$router.push("/"), 500);
       }
     }

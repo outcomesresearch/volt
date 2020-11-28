@@ -50,6 +50,16 @@ export function read(key) {
   });
 }
 
+function writeChild(path, obj, action) {
+  action = action || "update";
+  const ref = initializedApp.database().ref(store.getters.currentUser.id);
+  let pointer = ref;
+  path.split(".").forEach((k) => (pointer = pointer.child(k)));
+  const response = pointer[action](obj);
+  ref.off();
+  return response;
+}
+
 export const write = {
   /**
    * Write into firebase once use has autneticated themselves either thru firebase's stored authentication, or manual login.
@@ -57,60 +67,34 @@ export const write = {
   authenticatedSelf: function() {
     return new Promise((res) => {
       if (store.getters.currentUser) {
-        const ref = initializedApp.database().ref(store.getters.currentUser.id);
-        const sessionKey = ref.child("sessions").push({
-          studyID: store.getters.currentUser.id,
-          loginTime: getDate(),
-        }).key;
+        const startedTime = getDate();
+        const obj = { studyID: store.getters.currentUser.id, startedTime };
+        const sessionKey = writeChild(`sessions`, obj, "push").key;
         store.dispatch("SET_SESSION_KEY", sessionKey);
-        ref.off();
         res();
       }
     });
   },
 
-  startedSniffing: function() {
-    if (store.getters.currentUser) {
-      const ref = initializedApp.database().ref(store.getters.currentUser.id);
-      const sessionKey = store.getters.sessionKey;
-      ref
-        .child("sessions")
-        .child(sessionKey)
-        .update({
-          started: true,
-        });
-      ref.off();
-    }
-  },
-
   recordOdor: function(odor) {
     if (store.getters.currentUser) {
-      const ref = initializedApp.database().ref(store.getters.currentUser.id);
       const sessionKey = store.getters.sessionKey;
-      ref
-        .child("sessions")
-        .child(sessionKey)
-        .child("odors")
-        .update({ [odor]: getDate() });
-      ref.off();
+      writeChild(`sessions.${sessionKey}.odors`, { [odor]: getDate() });
     }
   },
 
-  // logout: function() {
-  //   return new Promise((res) => {
-  //     console.log(store.getters.sessionKey);
-  //     if (store.getters.currentUser) {
-  //       const ref = initializedApp.database().ref(store.getters.currentUser.id);
-  //       const sessionKey = store.getters.sessionKey;
-  //       ref
-  //         .child("sessions")
-  //         .child(sessionKey)
-  //         .update({ logoutTime: Date.now() });
+  recordSessionEnd: function() {
+    if (store.getters.currentUser) {
+      const sessionKey = store.getters.sessionKey;
+      const endedTime = getDate();
+      writeChild(`sessions.${sessionKey}`, { endedTime });
+    }
+  },
 
-  //       ref.off();
-  //       console.log("resolved");
-  //       res();
-  //     }
-  //   });
-  // },
+  recordSessionEndReason: function(sessionEndReason) {
+    if (store.getters.currentUser) {
+      const sessionKey = store.getters.sessionKey;
+      writeChild(`sessions.${sessionKey}`, { sessionEndReason });
+    }
+  },
 };
