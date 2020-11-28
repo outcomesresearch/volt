@@ -203,4 +203,10 @@ h1 {
     text-align: left;
   }
 }
+
+.footer-bottom {
+  height: 100%;
+  display: grid;
+  grid-template-rows: min-content auto min-content;
+}
 </style>

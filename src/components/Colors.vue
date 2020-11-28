@@ -1,30 +1,32 @@
 <template>
-  <div>
+  <div class="footer-bottom">
     <volt-header />
-    <div class="full-bleed-hero">
-      <!-- <img src="@/assets/hello-cellphone.jpg" /> -->
-    </div>
-    <div class="instruction-panel">
-      <div class="instructions-title">INSTRUCTIONS</div>
-      <ul>
-        <li>
-          Prepare the four odor oils by dropping them on a cotton ball and
-          placing them in their respectively labeled jars.
-        </li>
-        <li>
-          Sniff each scent for 10 seconds, twice daily, once in the morning and
-          once in evening<span
-            v-if="currentUser && currentUser.studyArm === 'photo'"
-            >, while looking at the photo of the odor</span
-          >.
-        </li>
-        <li>
-          Take 30 seconds of rest between each scent.
-        </li>
-      </ul>
-    </div>
-    <div class="start-button md-primary">
-      <md-button @click="startExercise">Start</md-button>
+    <div>
+      <div class="full-bleed-hero">
+        <!-- <img src="@/assets/hello-cellphone.jpg" /> -->
+      </div>
+      <div class="instruction-panel">
+        <div class="instructions-title">INSTRUCTIONS</div>
+        <ul>
+          <li>
+            Prepare the four odor oils by dropping them on a cotton ball and
+            placing them in their respectively labeled jars.
+          </li>
+          <li>
+            Sniff each scent for 10 seconds, twice daily, once in the morning
+            and once in evening<span
+              v-if="currentUser && currentUser.studyArm === 'photo'"
+              >, while looking at the photo of the odor</span
+            >.
+          </li>
+          <li>
+            Take 30 seconds of rest between each scent.
+          </li>
+        </ul>
+      </div>
+      <div class="start-button md-primary">
+        <md-button @click="startExercise">Start</md-button>
+      </div>
     </div>
     <volt-footer />
   </div>

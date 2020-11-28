@@ -1,5 +1,5 @@
 <template>
-  <div class="grid">
+  <div class="footer-bottom">
     <volt-header />
     <div class="login-container">
       <div class="login-panel">
@@ -103,11 +103,5 @@ export default {
 .login-panel {
   max-width: 300px;
   margin: auto;
-}
-
-.grid {
-  height: 100%;
-  display: grid;
-  grid-template-rows: min-content auto min-content;
 }
 </style>
