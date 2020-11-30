@@ -26,7 +26,6 @@ export default {
   name: "Sniff",
   data() {
     return {
-      sessionEndReason: "close-refresh",
       pictures: [],
       pictureIndex: -1,
       resting: false,
@@ -46,7 +45,6 @@ export default {
     endSniffing() {
       this.pictures = [];
       this.$root.$emit("counter-status", false);
-      write.recordSessionEndReason(this.sessionEndReason);
       write.recordSessionEnd();
       this.done = true;
     },
@@ -60,8 +58,6 @@ export default {
     return next();
   },
   async mounted() {
-    window.addEventListener("beforeunload", this.endSniffing);
-
     this.pictures = Object.keys(this.currentUser.odors).map((name) => name);
     let resolve = () => {};
 
@@ -85,9 +81,7 @@ export default {
       if (!this.done) write.recordOdor(this.pictures[i]);
 
       if (i === this.pictures.length - 1) {
-        this.sessionEndReason = "completed";
         this.endSniffing();
-        window.removeEventListener("beforeunload", this.endSniffing);
         setTimeout(() => this.$router.push("/"), 500);
       }
     }

@@ -90,11 +90,4 @@ export const write = {
       writeChild(`sessions.${sessionKey}`, { endedTime });
     }
   },
-
-  recordSessionEndReason: function(sessionEndReason) {
-    if (store.getters.currentUser) {
-      const sessionKey = store.getters.sessionKey;
-      writeChild(`sessions.${sessionKey}`, { sessionEndReason });
-    }
-  },
 };
