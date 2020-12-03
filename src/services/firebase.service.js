@@ -1,14 +1,21 @@
 import firebase from "firebase";
 import store from "../store/";
+import picturesPerOdor from "../assets/picturesPerOdor.json";
 
 const getDate = () => {
   return new Date().toString();
+};
+
+const getRand = (odor) => {
+  const total = picturesPerOdor[odor];
+  return ((Math.random() * total) << 0) + 1;
 };
 
 const firebaseConfig = {
   apiKey: process.env.VUE_APP_API_KEY,
   projectId: process.env.VUE_APP_PROJECTID,
   databaseURL: process.env.VUE_APP_DB_URL,
+  storageBucket: process.env.VUE_APP_STORAGE_URL,
 };
 
 export const initializedApp = firebase.initializeApp(firebaseConfig);
@@ -27,7 +34,8 @@ export const auth = {
     return new Promise((res, rej) => {
       initializedApp.auth().onAuthStateChanged(async function(user) {
         if (user) {
-          read(user.uid)
+          read
+            .simpleRead(user.uid)
             .then((acct) => {
               store.dispatch("SET_AUTH_ACTION", { id: user.uid, ...acct });
               res();
@@ -41,14 +49,31 @@ export const auth = {
   },
 };
 
-export function read(key) {
-  return new Promise((res, rej) => {
-    initializedApp
-      .database()
-      .ref(key)
-      .once("value", (data) => res(data.val()), rej);
-  });
-}
+export const read = {
+  async getImages() {
+    const user = store.getters.currentUser;
+    const odorNames = Object.keys(user.odors).map((name) => ({ name }));
+    if (!user.studyArm || user.studyArm !== "photo") return odorNames;
+
+    // Get random image from any number of <odor>_<number>.jpg named files in Google Cloud storage
+    const storage = initializedApp.storage();
+    for (let i = 0; i < odorNames.length; i++) {
+      const url = process.env.VUE_APP_STORAGE_URL;
+      const name = odorNames[i].name.replace(/ /g, "").toLowerCase();
+      const imgPath = `${url}/${name}-${getRand(name)}.jpg`;
+      odorNames[i].src = await storage.refFromURL(imgPath).getDownloadURL();
+    }
+    return odorNames;
+  },
+  simpleRead(key) {
+    return new Promise((res, rej) => {
+      initializedApp
+        .database()
+        .ref(key)
+        .once("value", (data) => res(data.val()), rej);
+    });
+  },
+};
 
 function writeChild(path, obj, action) {
   action = action || "update";

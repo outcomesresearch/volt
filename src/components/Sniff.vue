@@ -3,11 +3,13 @@
     <div class="smelling-banner" v-show="paused">Paused</div>
     <div v-show="!paused">
       <div class="resting-banner" v-show="resting">Resting...</div>
-      <div v-show="!resting && pictureIndex != -1">
-        <div class="smelling-banner">Smelling {{ pictures[pictureIndex] }}</div>
+      <div v-show="!resting && pictures.length">
+        <div class="smelling-banner">
+          Smelling {{ pictures[pictureIndex].name }}
+        </div>
         <img
           v-show="currentUser.studyArm === 'photo' && !paused"
-          :src="imgPath"
+          :src="pictures[pictureIndex].src"
         />
       </div>
     </div>
@@ -20,7 +22,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { write } from "../services/firebase.service";
+import { write, read } from "../services/firebase.service";
 
 export default {
   name: "Sniff",
@@ -30,16 +32,11 @@ export default {
       pictureIndex: -1,
       resting: false,
       paused: false,
-      done: false,
+      done: true,
     };
   },
   computed: {
     ...mapGetters(["currentUser"]),
-    imgPath() {
-      return this.pictures[this.pictureIndex]
-        ? require(`@/assets/images/${this.pictures[this.pictureIndex]}.jpg`)
-        : "";
-    },
   },
   methods: {
     endSniffing() {
@@ -58,7 +55,8 @@ export default {
     return next();
   },
   async mounted() {
-    this.pictures = Object.keys(this.currentUser.odors).map((name) => name);
+    this.pictures = await read.getImages();
+    this.done = false;
     let resolve = () => {};
 
     this.$root.$on("timer-done", () => {
@@ -78,7 +76,7 @@ export default {
         this.$root.$emit("start-timer", 5);
       });
 
-      if (!this.done) write.recordOdor(this.pictures[i]);
+      if (!this.done) write.recordOdor(this.pictures[i].name);
 
       if (i === this.pictures.length - 1) {
         this.endSniffing();
@@ -101,7 +99,7 @@ export default {
 }
 .image-wrapper {
   padding: 16px;
-  max-width: 800px;
+  max-width: 600px;
   margin: auto;
 }
 .image-wrapper img {
