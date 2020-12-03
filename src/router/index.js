@@ -27,7 +27,12 @@ const routes = [
         console.log(from.name);
         await auth.checkAuthentication().catch(() => next("/login"));
       }
-      to.params.pictures = await read.getImages();
+
+      // Attach pre-fetched pictures to params, if not there already
+      if (!to.params.pictures) {
+        to.params.pictures = await read.getImages();
+      }
+
       await write.authenticatedSelf();
       return next();
     },

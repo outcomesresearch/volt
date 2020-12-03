@@ -25,7 +25,9 @@
         </ul>
       </div>
       <div class="start-button md-primary">
-        <md-button @click="startExercise">Start</md-button>
+        <md-button @click="startExercise" :disabled="!imagesFetched"
+          >Start</md-button
+        >
       </div>
     </div>
     <volt-footer />
@@ -36,16 +38,28 @@
 import { mapGetters } from "vuex";
 import VoltHeader from "./Header.vue";
 import VoltFooter from "./Footer.vue";
+import { read } from "@/services/firebase.service.js";
 
 export default {
   name: "colors",
+  data() {
+    return {
+      imagesFetched: false,
+      pictures: [],
+    };
+  },
   components: { VoltHeader, VoltFooter },
   computed: {
     ...mapGetters(["currentUser"]),
   },
+  async created() {
+    this.pictures = await read.getImages();
+    this.imagesFetched = true;
+  },
   methods: {
-    startExercise() {
-      this.$router.push("/sniff");
+    async startExercise() {
+      const { pictures } = this;
+      this.$router.push({ name: "sniff-exercise", params: { pictures } });
     },
   },
 };
