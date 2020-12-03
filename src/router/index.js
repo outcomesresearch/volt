@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import { auth, write } from "../services/firebase.service.js";
+import { auth, write, read } from "../services/firebase.service.js";
 import store from "../store/";
 
 Vue.use(VueRouter);
@@ -27,6 +27,7 @@ const routes = [
         console.log(from.name);
         await auth.checkAuthentication().catch(() => next("/login"));
       }
+      to.params.pictures = await read.getImages();
       await write.authenticatedSelf();
       return next();
     },

@@ -22,7 +22,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { write, read } from "../services/firebase.service";
+import { write } from "../services/firebase.service";
 
 export default {
   name: "Sniff",
@@ -55,7 +55,7 @@ export default {
     return next();
   },
   async mounted() {
-    this.pictures = await read.getImages();
+    this.pictures = this.$route.params.pictures;
     this.done = false;
     let resolve = () => {};
 
