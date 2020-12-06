@@ -1,45 +1,37 @@
 <template>
   <div id="app">
-    <div class="page-container">
-      <md-app md-waterfall md-mode="fixed">
-        <md-app-toolbar class="md-primary md-dense">
-          <img
-            class="washu-branding"
-            src="@/assets/washu_logo.svg"
-            alt="Branding for Washington
-        University in St. Louis"
-          />
-          <div class="counter">
-            <volt-timer
-              @counter-value="progress = $event"
-              v-if="counterStatus"
-              :key="timerRefreshKey"
-              :limit="limit"
-              :pause="pause"
-            />
-          </div>
-          <h3 v-if="currentUser" class="md-title">
-            Welcome,
-            {{ currentUser.fname | truncatedString(17) }}
-          </h3>
-          <md-button
-            class="log-out-button"
-            v-if="currentUser && !counterStatus"
-            @click="logout"
-            >Log Out</md-button
-          >
-        </md-app-toolbar>
-        <md-app-content>
-          <md-progress-bar
-            style="margin: -17px -16px 0px -17px"
-            md-mode="determinate"
-            :md-value="(progress / limit) * 100"
+    <md-app md-waterfall md-mode="fixed">
+      <md-app-toolbar class="md-primary md-dense">
+        <h3 v-if="currentUser" class="md-title welcome-name">
+          Welcome,
+          {{ currentUser.fname | truncatedString(17) }}
+        </h3>
+        <div class="counter">
+          <volt-timer
+            @counter-value="progress = $event"
             v-if="counterStatus"
-          ></md-progress-bar>
-          <router-view />
-        </md-app-content>
-      </md-app>
-    </div>
+            :key="timerRefreshKey"
+            :limit="limit"
+            :pause="pause"
+          />
+        </div>
+        <md-button
+          class="log-out-button"
+          v-if="currentUser && !counterStatus"
+          @click="logout"
+          >Log Out</md-button
+        >
+      </md-app-toolbar>
+      <md-app-content>
+        <md-progress-bar
+          style="margin: -17px -16px 0px -17px"
+          md-mode="determinate"
+          :md-value="(progress / limit) * 100"
+          v-if="counterStatus"
+        ></md-progress-bar>
+        <router-view />
+      </md-app-content>
+    </md-app>
   </div>
 </template>
 
@@ -95,8 +87,6 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap");
 
-$washuLogoWidth: 252px;
-
 #app {
   height: 100%;
 }
@@ -109,21 +99,11 @@ body {
   font-family: "Source Sans Pro" !important;
 }
 
-.page-container {
-  min-height: 100%;
-}
+// Override material design (md-) namespaces
 .md-app {
-  min-height: 100vh;
+  min-height: 100%;
   border: none;
   overflow: hidden;
-}
-
-.washu-branding {
-  width: $washuLogoWidth;
-  max-height: 25px;
-  vertical-align: bottom;
-  margin: 0.55em 0;
-  pointer-events: none;
 }
 
 .md-title {
@@ -137,18 +117,11 @@ body {
 }
 
 .md-toolbar.md-app-toolbar.md-primary.md-dense.md-theme-default.md-elevation-4.md-no-elevation {
-  padding-left: calc(calc(100% - #{$content-width}) / 2);
-  padding-right: calc(calc(100% - #{$content-width}) / 2);
+  padding: 0px !important;
 }
 
 .md-button-content {
   font-weight: bold;
-}
-
-.counter {
-  font-size: 16px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 h1 {
@@ -163,10 +136,42 @@ h1 {
   margin: auto;
 }
 
+/** Items in toolbar:  
+
+Landing page: 
+- left: Welcome, <fname> 
+- right: Log Out button
+
+Sniff Carousel: 
+- left: Welcome, <fname>
+- right: <sec> remaining
+ */
+
+.welcome-name {
+  max-height: 25px;
+  vertical-align: bottom;
+  pointer-events: none;
+  margin-left: 16px !important;
+}
+
+.log-out-button {
+  margin-right: 8px !important;
+}
+
+.counter {
+  font-size: 16px;
+  margin-left: auto;
+  margin-right: 16px;
+}
+
+// Parent-class to float footer to bottom
+.footer-bottom {
+  height: 100%;
+  display: grid;
+  grid-template-rows: min-content auto min-content;
+}
+
 @media (max-width: 71em) {
-  .md-toolbar.md-app-toolbar.md-primary.md-dense.md-theme-default.md-elevation-4.md-no-elevation {
-    padding: 0px 8px;
-  }
   .toolbar {
     width: 100%;
     max-width: unset !important;
@@ -179,34 +184,8 @@ h1 {
 
 @media (max-width: 500px) {
   @import "@/assets/ColorComponentMobile.scss";
-
-  .washu-branding {
-    margin-right: calc(100% - #{$washuLogoWidth});
-  }
-  h3.md-title {
-    margin-left: 0px !important;
-  }
-
-  .log-out-button {
-    margin-left: auto !important;
-    margin-right: 0px !important;
-  }
-
-  .counter {
-    margin-left: 0px;
-  }
-
   .footer {
     text-align: center;
   }
-  .footer-copyright {
-    text-align: left;
-  }
-}
-
-.footer-bottom {
-  height: 100%;
-  display: grid;
-  grid-template-rows: min-content auto min-content;
 }
 </style>
