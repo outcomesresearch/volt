@@ -16,6 +16,8 @@ import {
   MdToolbar,
   MdContent,
   MdProgress,
+  MdDialog,
+  MdTabs,
 } from "vue-material/dist/components";
 import "vue-material/dist/vue-material.min.css";
 
@@ -30,6 +32,8 @@ Vue.use(MdDrawer);
 Vue.use(MdToolbar);
 Vue.use(MdContent);
 Vue.use(MdProgress);
+Vue.use(MdDialog);
+Vue.use(MdTabs);
 
 Vue.filter("truncatedString", function(value, size) {
   if (!value) return "";

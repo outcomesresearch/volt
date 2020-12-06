@@ -18,6 +18,12 @@
         <md-button
           class="log-out-button"
           v-if="currentUser && !counterStatus"
+          @click="makingNote = true"
+          >Make Note</md-button
+        >
+        <md-button
+          class="log-out-button"
+          v-if="currentUser && !counterStatus"
           @click="logout"
           >Log Out</md-button
         >
@@ -35,6 +41,7 @@
     <md-snackbar :md-active.sync="snackBarShowing">
       {{ snackBarMessage }}
     </md-snackbar>
+    <volt-modal :active="makingNote" />
   </div>
 </template>
 
@@ -42,15 +49,17 @@
 import { mapGetters } from "vuex";
 import { auth } from "./services/firebase.service";
 import VoltTimer from "./components/Timer";
+import VoltModal from "./components/Modal";
 
 export default {
   name: "App",
-  components: { VoltTimer },
+  components: { VoltTimer, VoltModal },
   data() {
     return {
       counterStatus: false,
       snackBarShowing: false,
       snackBarMessage: undefined,
+      makingNote: false,
       intervalHandle: undefined,
       timerRefreshKey: 0,
       progress: 0,
@@ -181,6 +190,11 @@ Sniff Carousel:
   grid-template-rows: min-content auto min-content;
 }
 
+// Text area overrides:
+.md-count {
+  background-color: white;
+}
+
 @media (max-width: 71em) {
   .toolbar {
     width: 100%;
@@ -189,6 +203,15 @@ Sniff Carousel:
     & .footer {
       padding: 1em 16px !important;
     }
+  }
+}
+
+@media (min-width: 500px) {
+  .md-dialog-container {
+    height: 80%;
+    width: 80%;
+    max-width: 500px !important;
+    max-height: 500px !important;
   }
 }
 

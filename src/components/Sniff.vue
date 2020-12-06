@@ -80,6 +80,10 @@ export default {
 
       if (i === this.pictures.length - 1) {
         this.endSniffing();
+        this.$root.$emit(
+          "show-snackbar",
+          "Thanks for participating! Feel free to jot down anything special in a Note"
+        );
         setTimeout(() => this.$router.push("/"), 500);
       }
     }
