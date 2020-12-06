@@ -40,9 +40,6 @@
               >
             </md-card-actions>
           </md-card>
-          <md-snackbar :md-active.sync="userSaved">{{
-            snackBarMessage
-          }}</md-snackbar>
         </form>
       </div>
     </div>
@@ -60,9 +57,7 @@ export default {
   components: { VoltHeader, VoltFooter },
   data() {
     return {
-      userSaved: false,
       sending: false,
-      snackBarMessage: "",
       v: {
         form: {
           studyID: { minLength: 10, required: true },
@@ -87,8 +82,7 @@ export default {
           }
 
           // Show snackbar with error on sign in failure
-          this.snackBarMessage = err.message;
-          this.userSaved = true;
+          this.$root.$emit("show-snackbar", err.message);
         });
     },
   },

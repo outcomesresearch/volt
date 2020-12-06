@@ -32,6 +32,9 @@
         <router-view />
       </md-app-content>
     </md-app>
+    <md-snackbar :md-active.sync="snackBarShowing">
+      {{ snackBarMessage }}
+    </md-snackbar>
   </div>
 </template>
 
@@ -46,6 +49,8 @@ export default {
   data() {
     return {
       counterStatus: false,
+      snackBarShowing: false,
+      snackBarMessage: undefined,
       intervalHandle: undefined,
       timerRefreshKey: 0,
       progress: 0,
@@ -59,6 +64,11 @@ export default {
       this.progress = 0;
       this.timerRefreshKey += 1;
       this.limit = limit;
+    });
+
+    this.$root.$on("show-snackbar", async (message) => {
+      this.snackBarShowing = true;
+      this.snackBarMessage = message;
     });
 
     this.$root.$on("pause", () => {
