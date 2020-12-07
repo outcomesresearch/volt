@@ -115,4 +115,11 @@ export const write = {
       writeChild(`sessions.${sessionKey}`, { endedTime });
     }
   },
+
+  recordNote: function(content) {
+    if (store.getters.currentUser) {
+      const recordedTime = getDate();
+      writeChild("notes", { recordedTime, content }, "push");
+    }
+  },
 };

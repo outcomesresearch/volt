@@ -32,6 +32,8 @@
 </template>
 
 <script>
+import { write } from "@/services/firebase.service.js";
+
 export default {
   data() {
     return {
@@ -42,14 +44,15 @@ export default {
   methods: {
     close() {
       // Reach into the child and call the correct method to close this dialog
+      this.inProgress = false;
       this.$children[0].closeDialog();
     },
-    save() {
+    async save() {
       this.inProgress = true;
-
-      setTimeout(() => {
-        this.inProgress = false;
-      }, 2000);
+      await write.recordNote(this.text);
+      this.text = undefined;
+      this.close();
+      this.$root.$emit("show-snackbar", "Note saved!");
     },
   },
 };
