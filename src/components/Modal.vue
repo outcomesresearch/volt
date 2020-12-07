@@ -14,7 +14,19 @@
     </md-dialog-content>
     <md-dialog-actions>
       <md-button class="md-primary" @click="close">Close</md-button>
-      <md-button class="md-primary" @click="close">Save</md-button>
+      <div>
+        <md-button class="md-primary hidden-spinner" v-show="inProgress">
+          <md-progress-spinner
+            class="my-spin"
+            :md-diameter="20"
+            :md-stroke="3"
+            md-mode="indeterminate"
+          ></md-progress-spinner>
+        </md-button>
+        <md-button class="md-primary" v-show="!inProgress" @click="save"
+          >Save</md-button
+        >
+      </div>
     </md-dialog-actions>
   </md-dialog>
 </template>
@@ -24,12 +36,20 @@ export default {
   data() {
     return {
       text: undefined,
+      inProgress: false,
     };
   },
   methods: {
     close() {
       // Reach into the child and call the correct method to close this dialog
       this.$children[0].closeDialog();
+    },
+    save() {
+      this.inProgress = true;
+
+      setTimeout(() => {
+        this.inProgress = false;
+      }, 2000);
     },
   },
 };
@@ -52,7 +72,26 @@ export default {
   resize: none;
 }
 
-.volt-container {
-  max-height: calc(100% - 30px);
+.md-primary {
+  min-width: 75px !important;
+}
+
+.hidden-spinner {
+  margin-left: 8px !important;
+}
+
+.full {
+  color: white !important;
+  &.my-button {
+    position: relative;
+  }
+
+  &.my-spin {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -10px;
+    margin-left: -10px;
+  }
 }
 </style>
