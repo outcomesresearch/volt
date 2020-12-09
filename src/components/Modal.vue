@@ -1,5 +1,9 @@
 <template>
-  <md-dialog :md-active.sync="$parent.makingNote">
+  <md-dialog
+    :md-active.sync="$parent.makingNote"
+    @md-opened="$root.$emit('modal', true)"
+    @md-closed="$root.$emit('modal', false)"
+  >
     <md-dialog-title>Jot something down...</md-dialog-title>
     <md-dialog-content>
       <md-field class="field">
@@ -77,7 +81,7 @@ export default {
 .field {
   margin: 0px;
   height: 100%;
-      overflow: hidden;
+  overflow: hidden;
 }
 #volt.md-textarea {
   padding-top: 0px;

@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" :style="modalStyle">
     <md-app md-waterfall md-mode="fixed">
       <md-app-toolbar class="md-primary md-dense">
         <h3 v-if="currentUser" class="md-title welcome-name">
@@ -62,6 +62,7 @@ export default {
       snackBarMessage: undefined,
       makingNote: false,
       intervalHandle: undefined,
+      modalShowing: false,
       timerRefreshKey: 0,
       progress: 0,
       limit: 10,
@@ -85,10 +86,17 @@ export default {
       this.pause = !this.pause;
     });
 
+    this.$root.$on("modal", (opened) => {
+      this.modalShowing = opened;
+    });
+
     this.$root.$on("counter-status", (status) => (this.counterStatus = status));
   },
   computed: {
     ...mapGetters(["currentUser"]),
+    modalStyle() {
+      return { overflow: this.modalShowing ? "hidden" : "auto" };
+    },
   },
   methods: {
     logout() {
