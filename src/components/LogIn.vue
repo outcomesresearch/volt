@@ -77,10 +77,6 @@ export default {
           this.$router.push("/");
         })
         .catch((err) => {
-          if (err.message.includes("permission_denied")) {
-            err.message = `Can't log in (no permissions to the database). Please contact amish.khan@wustl.edu.`;
-          }
-
           // Show snackbar with error on sign in failure
           this.$root.$emit("show-snackbar", err.message);
         });

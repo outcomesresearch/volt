@@ -23,7 +23,11 @@
             md-mode="indeterminate"
           ></md-progress-spinner>
         </md-button>
-        <md-button class="md-primary" v-show="!inProgress" @click="save"
+        <md-button
+          class="md-primary"
+          v-show="!inProgress"
+          @click="save"
+          :disabled="!text"
           >Save</md-button
         >
       </div>
@@ -49,10 +53,17 @@ export default {
     },
     async save() {
       this.inProgress = true;
-      await write.recordNote(this.text);
-      this.text = undefined;
-      this.close();
-      this.$root.$emit("show-snackbar", "Note saved!");
+      write
+        .recordNote(this.text)
+        .then(() => {
+          this.text = undefined;
+          this.close();
+          this.$root.$emit("show-snackbar", "notes.saved");
+        })
+        .catch((e) => {
+          this.$root.$emit("show-snackbar", e.message);
+          this.inProgress = false;
+        });
     },
   },
 };

@@ -42,7 +42,6 @@ export default {
     endSniffing() {
       this.pictures = [];
       this.$root.$emit("counter-status", false);
-      write.recordSessionEnd();
       this.done = true;
     },
     handlePause() {
@@ -80,10 +79,8 @@ export default {
 
       if (i === this.pictures.length - 1) {
         this.endSniffing();
-        this.$root.$emit(
-          "show-snackbar",
-          "Thanks for participating! Feel free to jot down anything special in a Note"
-        );
+        write.recordSessionEnd();
+        this.$root.$emit("show-snackbar", "session.ended");
         setTimeout(() => this.$router.push("/"), 500);
       }
     }

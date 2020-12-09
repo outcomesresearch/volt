@@ -52,6 +52,11 @@ export const auth = {
 export const read = {
   async getImages() {
     const user = store.getters.currentUser;
+    if (!user.odors)
+      throw new Error(
+        `User ${user.id} has no odors listed in Firebase profile`
+      );
+
     const odorNames = Object.keys(user.odors).map((name) => ({ name }));
     if (!user.studyArm || user.studyArm !== "photo") return odorNames;
 
@@ -85,16 +90,25 @@ function writeChild(path, obj, action) {
   return response;
 }
 
+function catchHandler(promise) {
+  return promise.catch((e) => {
+    e.message += ` during: ${this.purpose}`;
+    console.error(e.message);
+  });
+}
+
 export const write = {
   /**
    * Write into firebase once use has autneticated themselves either thru firebase's stored authentication, or manual login.
    */
   authenticatedSelf: function() {
+    const purpose = "User authenticates self and begins training session";
+    const c = catchHandler.bind({ purpose });
     return new Promise((res) => {
       if (store.getters.currentUser) {
         const startedTime = getDate();
         const obj = { studyID: store.getters.currentUser.id, startedTime };
-        const sessionKey = writeChild(`sessions`, obj, "push").key;
+        const sessionKey = c(writeChild(`sessions`, obj, "push", purpose)).key;
         store.dispatch("SET_SESSION_KEY", sessionKey);
         res();
       }
@@ -102,24 +116,30 @@ export const write = {
   },
 
   recordOdor: function(odor) {
+    const purpose = "Picture, resting completed for specific odor";
+    const c = catchHandler.bind({ purpose });
     if (store.getters.currentUser) {
       const sessionKey = store.getters.sessionKey;
-      writeChild(`sessions.${sessionKey}.odors`, { [odor]: getDate() });
+      return c(
+        writeChild(`sessions.${sessionKey}.odors`, { [odor]: getDate() })
+      );
     }
   },
 
   recordSessionEnd: function() {
+    const purpose = "Training sesison (all odors) ended successfully";
+    const c = catchHandler.bind({ purpose });
     if (store.getters.currentUser) {
       const sessionKey = store.getters.sessionKey;
       const endedTime = getDate();
-      writeChild(`sessions.${sessionKey}`, { endedTime });
+      return c(writeChild(`sessions.${sessionKey}`, { endedTime }));
     }
   },
 
   recordNote: function(content) {
     if (store.getters.currentUser) {
       const recordedTime = getDate();
-      writeChild("notes", { recordedTime, content }, "push");
+      return writeChild("notes", { recordedTime, content }, "push");
     }
   },
 };

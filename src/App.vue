@@ -48,6 +48,7 @@
 <script>
 import { mapGetters } from "vuex";
 import { auth } from "./services/firebase.service";
+import { txlate } from "@/services/message.service.js";
 import VoltTimer from "./components/Timer";
 import VoltModal from "./components/Modal";
 
@@ -77,7 +78,7 @@ export default {
 
     this.$root.$on("show-snackbar", async (message) => {
       this.snackBarShowing = true;
-      this.snackBarMessage = message;
+      this.snackBarMessage = txlate(message);
     });
 
     this.$root.$on("pause", () => {
