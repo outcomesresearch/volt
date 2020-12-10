@@ -1,0 +1,27 @@
+<template>
+  <md-card class="past-note">
+    <md-card-content class="card-content">
+      {{ $attrs.note.content }}</md-card-content
+    >
+    <md-card-actions
+      ><div class="datestamp">
+        {{ new Date($attrs.note.recordedTime).toLocaleString() }}
+      </div></md-card-actions
+    ></md-card
+  >
+</template>
+
+<style scoped lang="scss">
+.past-note {
+  margin: 0px;
+  overflow: scroll;
+  box-shadow: none;
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  color: rgb(70, 70, 70) !important;
+}
+
+.datestamp {
+  font-style: oblique;
+  color: grey;
+}
+</style>

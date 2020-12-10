@@ -18,12 +18,6 @@
         <md-button
           class="log-out-button"
           v-if="currentUser && !counterStatus"
-          @click="makingNote = true"
-          >Make Note</md-button
-        >
-        <md-button
-          class="log-out-button"
-          v-if="currentUser && !counterStatus"
           @click="logout"
           >Log Out</md-button
         >
@@ -41,7 +35,7 @@
     <md-snackbar :md-active.sync="snackBarShowing">
       {{ snackBarMessage }}
     </md-snackbar>
-    <volt-modal :active="makingNote" />
+    <volt-modal :active="modalShowing" />
   </div>
 </template>
 
@@ -88,6 +82,10 @@ export default {
 
     this.$root.$on("modal", (opened) => {
       this.modalShowing = opened;
+    });
+
+    this.$root.$on("making-note", () => {
+      this.makingNote = true;
     });
 
     this.$root.$on("counter-status", (status) => (this.counterStatus = status));
@@ -228,6 +226,15 @@ Sniff Carousel:
   @import "@/assets/ColorComponentMobile.scss";
   .footer {
     text-align: center;
+  }
+  .panel-container {
+    grid-template-columns: 1fr !important;
+    & .past-notes {
+      order: 2;
+    }
+    & .right-column {
+      order: 1;
+    }
   }
 }
 </style>
