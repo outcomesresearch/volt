@@ -115,7 +115,7 @@ export default {
     this.imagesFetched = true;
   },
   mounted() {
-    this.notes = this.currentUser.notes;
+    this.notes = this.currentUser.notes || [];
   },
   methods: {
     async startExercise() {
