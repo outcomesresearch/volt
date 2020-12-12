@@ -13,19 +13,17 @@
           </template>
           <template v-slot:content>
             <div
-              v-if="notes && Object.keys(notes).length"
+              v-if="notes && sortedNotes.length"
               class="past-note-container"
+              :key="sortedNotes.length"
             >
               <volt-past-note
                 :note="note"
-                v-for="note in notes"
+                v-for="note in sortedNotes"
                 :key="note.recordedAt"
               />
             </div>
-            <div
-              v-if="notes && !Object.keys(notes).length"
-              class="notes-placeholder"
-            >
+            <div v-if="notes && !sortedNotes.length" class="notes-placeholder">
               <div>No notes yet!</div>
             </div>
           </template>
@@ -110,6 +108,18 @@ export default {
   components: { VoltHeader, VoltFooter, VoltCard, VoltPastNote },
   computed: {
     ...mapGetters(["currentUser"]),
+    sortedNotes() {
+      const keys = Object.keys(this.notes);
+      return keys.length
+        ? keys
+            .map((k) => this.notes[k])
+            .sort((a, b) => {
+              return new Date(a.recordedTime) > new Date(b.recordedTime)
+                ? -1
+                : 0;
+            })
+        : [];
+    },
   },
   async created() {
     this.pictures = await read.getImages();
@@ -130,7 +140,7 @@ export default {
     });
   },
   mounted() {
-    this.notes = this.currentUser.notes || [];
+    this.notes = this.currentUser.notes || {};
   },
   methods: {
     async startExercise() {
@@ -146,7 +156,7 @@ export default {
     // Watch for changes in currentUser (if notes has changed).  If so, assign this View's notes property accordingly
     currentUser: {
       handler(newUser) {
-        this.notes = newUser.notes || [];
+        this.notes = newUser && newUser.notes ? newUser.notes : {};
       },
       deep: true,
     },

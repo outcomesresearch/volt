@@ -5,7 +5,14 @@
     >
     <md-card-actions
       ><div class="datestamp">
-        {{ new Date($attrs.note.recordedTime).toLocaleString() }}
+        {{
+          new Date($attrs.note.recordedTime).toLocaleString(undefined, {
+            day: "numeric",
+            month: "short",
+            hour: "numeric",
+            minute: "2-digit",
+          })
+        }}
       </div></md-card-actions
     ></md-card
   >
@@ -28,5 +35,6 @@
 .datestamp {
   font-style: oblique;
   color: grey;
+  margin-right: 5px;
 }
 </style>
