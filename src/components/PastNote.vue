@@ -18,6 +18,11 @@
   box-shadow: none;
   background-color: rgba(0, 0, 0, 0.05) !important;
   color: rgb(70, 70, 70) !important;
+
+  & .md-card-content {
+    height: unset;
+    padding-bottom: 0px;
+  }
 }
 
 .datestamp {

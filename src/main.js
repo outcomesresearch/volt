@@ -35,6 +35,14 @@ Vue.use(MdProgress);
 Vue.use(MdDialog);
 Vue.use(MdTabs);
 
+// Register a global custom directive called `v-focus`
+Vue.directive("focus", {
+  // When the bound element is inserted into the DOM...
+  inserted: async function(el) {
+    setTimeout(() => el.focus(), 500);
+  },
+});
+
 Vue.filter("truncatedString", function(value, size) {
   if (!value) return "";
   return value.length <= size ? value : value.substr(0, size) + "...";

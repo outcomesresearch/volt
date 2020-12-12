@@ -8,6 +8,7 @@
     <md-dialog-content>
       <md-field class="field">
         <md-textarea
+          v-focus
           v-model="text"
           md-counter
           :maxlength="1500"
@@ -76,6 +77,7 @@ export default {
 <style scoped lang="scss">
 .md-dialog-content {
   padding-bottom: 0px;
+  height: 100%;
 }
 
 .field {

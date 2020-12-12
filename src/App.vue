@@ -202,6 +202,11 @@ Sniff Carousel:
   background-color: white;
 }
 
+// Fix height of placeholder text's container on Safari, requires this override
+.past-notes .md-card-content {
+  height: 100%;
+}
+
 @media (max-width: 71em) {
   .toolbar {
     width: 100%;

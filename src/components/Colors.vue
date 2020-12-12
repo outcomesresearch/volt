@@ -172,7 +172,8 @@ $radius-small: 3px;
 .panel-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  grid-column-gap: 16px;
+  grid-row-gap: 16px;
 }
 
 .right-column {
