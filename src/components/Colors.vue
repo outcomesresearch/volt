@@ -95,7 +95,7 @@ import VoltHeader from "./Header.vue";
 import VoltFooter from "./Footer.vue";
 import VoltCard from "./Card.vue";
 import VoltPastNote from "./PastNote.vue";
-import { read } from "@/services/firebase.service.js";
+import { read, initializedApp } from "@/services/firebase.service.js";
 
 export default {
   name: "colors",
@@ -104,6 +104,7 @@ export default {
       imagesFetched: false,
       notes: undefined,
       pictures: [],
+      notesRef: undefined,
     };
   },
   components: { VoltHeader, VoltFooter, VoltCard, VoltPastNote },
@@ -113,6 +114,20 @@ export default {
   async created() {
     this.pictures = await read.getImages();
     this.imagesFetched = true;
+
+    // Get firebase reference to notes child of currentUser
+    this.notesRef = initializedApp
+      .database()
+      .ref(this.currentUser.id)
+      .child("notes");
+
+    // Attach a callback that fires when value changes.  We update the currentUser in the store, including the new notes.
+    this.notesRef.on("value", (data) => {
+      this.$store.dispatch("SET_AUTH_ACTION", {
+        ...this.currentUser,
+        notes: data.val(),
+      });
+    });
   },
   mounted() {
     this.notes = this.currentUser.notes || [];
@@ -121,6 +136,19 @@ export default {
     async startExercise() {
       const { pictures } = this;
       this.$router.push({ name: "sniff-exercise", params: { pictures } });
+    },
+  },
+  beforeDestroy() {
+    // Remove listeners on the firebase reference to notes
+    this.notesRef.off();
+  },
+  watch: {
+    // Watch for changes in currentUser (if notes has changed).  If so, assign this View's notes property accordingly
+    currentUser: {
+      handler(newUser) {
+        this.notes = newUser.notes || [];
+      },
+      deep: true,
     },
   },
 };
