@@ -1,8 +1,8 @@
 <template>
   <md-card class="past-note">
     <md-card-content class="card-content">
-      {{ $attrs.note.content }}</md-card-content
-    >
+      <volt-read-more>{{ $attrs.note.content }}</volt-read-more>
+    </md-card-content>
     <md-card-actions
       ><div class="datestamp">
         {{
@@ -18,6 +18,13 @@
   >
 </template>
 
+<script>
+import VoltReadMore from "./ReadMore.vue";
+
+export default {
+  components: { VoltReadMore },
+};
+</script>
 <style scoped lang="scss">
 .past-note {
   margin: 0px;
