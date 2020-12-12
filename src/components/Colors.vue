@@ -168,15 +168,19 @@ export default {
 @import "@/assets/App.scss";
 
 $radius-small: 3px;
+$instruction-color: #2b8282;
 
 .start-button {
   margin: auto;
   max-width: min-content;
   border-radius: $radius-small;
+  background: rgb(240, 240, 240);
 }
 
 .start-button button {
-  background-color: rgba(0, 0, 0, 0.075);
+  margin: 0px;
+  color: white !important;
+  background-color: lighten($instruction-color, 3);
 }
 
 .panel-container {
@@ -213,7 +217,7 @@ $radius-small: 3px;
 }
 
 .instruction-panel {
-  background-color: #2b8282;
+  background-color: $instruction-color;
   color: white;
   border-radius: $radius-small;
   padding: 16px;
