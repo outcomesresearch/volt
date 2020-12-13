@@ -120,11 +120,7 @@ export default {
       return keys.length
         ? keys
             .map((k) => this.notes[k])
-            .sort((a, b) => {
-              return new Date(a.recordedTime) > new Date(b.recordedTime)
-                ? -1
-                : 0;
-            })
+            .sort((a, b) => new Date(b.recordedTime) - new Date(a.recordedTime))
         : [];
     },
   },
