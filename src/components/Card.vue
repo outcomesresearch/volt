@@ -39,5 +39,6 @@ export default {
 
 .card-content {
   flex-grow: 1;
+  padding-bottom: 16px;
 }
 </style>

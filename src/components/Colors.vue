@@ -39,10 +39,16 @@
       <div class="right-column">
         <div class="begin-training">
           <volt-card :hasPadding="false">
+            <template v-slot:header>
+              <md-card-header>
+                <div class="md-title">
+                  <strong>Start Training</strong>
+                </div>
+              </md-card-header>
+            </template>
             <template v-slot:content>
-              <div class="instruction-panel">
+              <div class="instructions">
                 <div>
-                  <div class="instruction-title">Start Training</div>
                   <ul>
                     <li>
                       Prepare the four odor oils by dropping them on a cotton
@@ -71,12 +77,13 @@
         </div>
         <div class="compliance">
           <volt-card>
-            <template v-slot:header>
-              <md-card-header>
-                <div class="md-title">
-                  <strong>Compliance</strong>
+            <template v-slot:content
+              ><div class="circle-text">
+                <span class="traffic-light">●</span>
+                <div class="compliance-text">
+                  Both trainings completed on 30 of the last 50 days
                 </div>
-              </md-card-header>
+              </div>
             </template>
           </volt-card>
         </div>
@@ -169,18 +176,61 @@ export default {
 
 $radius-small: 3px;
 $instruction-color: #2b8282;
+$green: #0c0;
+$red: #ff0033;
+$orange: #ffa500;
 
-.start-button {
-  margin: auto;
-  max-width: min-content;
-  border-radius: $radius-small;
-  background: rgb(240, 240, 240);
+// Past notes panel
+.past-notes {
+  .past-note-container {
+    display: grid;
+    grid-row-gap: 16px;
+  }
+  .notes-placeholder {
+    display: flex;
+    font-size: 30px;
+    font-weight: 800;
+    color: lightgrey;
+    align-items: center;
+    height: 100%;
+    justify-content: center;
+  }
 }
 
-.start-button button {
-  margin: 0px;
-  color: white !important;
-  background-color: lighten($instruction-color, 3);
+// Start training teal panel
+.begin-training {
+  .teal-white {
+    background-color: $instruction-color;
+    color: white;
+  }
+  // Special style for this header
+  .md-card-header {
+    @extend .teal-white;
+  }
+  // Teal instruction panel
+  .instructions {
+    @extend .teal-white;
+    padding: 0px 16px 16px 16px;
+    font-size: 18px;
+    ul {
+      padding-inline-start: 20px;
+      margin-top: 0px;
+    }
+    li:not(:last-child) {
+      margin-bottom: 10px;
+    }
+    .start-button {
+      margin: auto;
+      max-width: min-content;
+      border-radius: $radius-small;
+      background: rgb(240, 240, 240);
+      button {
+        margin: 0px;
+        color: white !important;
+        background-color: lighten($instruction-color, 3);
+      }
+    }
+  }
 }
 
 .panel-container {
@@ -188,6 +238,7 @@ $instruction-color: #2b8282;
   grid-template-columns: 1fr 1fr;
   grid-column-gap: 16px;
   grid-row-gap: 16px;
+  margin-top: 0px;
 }
 
 .right-column {
@@ -199,47 +250,28 @@ $instruction-color: #2b8282;
   }
 }
 
-.notes-placeholder {
-  display: flex;
-  font-size: 30px;
-  font-weight: 800;
-  color: lightgrey;
-  align-items: center;
-  height: 100%;
-  justify-content: center;
-}
-
-.past-note-container {
-  display: grid;
-  grid-row-gap: 16px;
-  max-height: 800px;
-  overflow: scroll;
-}
-
-.instruction-panel {
-  background-color: $instruction-color;
-  color: white;
-  border-radius: $radius-small;
-  padding: 16px;
-  height: 100%;
-  font-size: 18px;
-}
-
-.instruction-panel ul {
-  padding-inline-start: 20px;
-}
-
-li:not(:last-child) {
-  margin-bottom: 10px;
-}
-
-.instruction-title {
-  font-style: italic;
-  font-weight: bold;
-  text-align: center;
-}
-
 .md-title {
   margin-top: 0px !important;
+}
+
+// Compliance readout
+.compliance {
+  .traffic-light {
+    color: $green;
+    text-shadow: 0px 0px 7px $green;
+    -webkit-transform: translateZ(0);
+    -webkit-text-shadow: 0px 0px 7px $green;
+    font-size: 60px;
+    margin-right: 10px;
+    line-height: 40px;
+    margin-bottom: 5px;
+  }
+  .circle-text {
+    display: flex;
+    align-items: center;
+  }
+  .compliance-text {
+    font-size: 16px;
+  }
 }
 </style>
