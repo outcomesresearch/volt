@@ -23,18 +23,19 @@ const routes = [
     name: `sniff-exercise`,
     component: () => import(`@/components/Sniff.vue`),
     beforeEnter: async function(to, from, next) {
-      if (!from.name) {
-        console.log(from.name);
-        await auth.checkAuthentication().catch(() => next("/login"));
+      try {
+        if (!from.name) {
+          await auth.checkAuthentication();
+        }
+        await write.authenticatedSelf();
+        // Attach pre-fetched pictures to params, if not there already
+        if (!to.params.pictures) {
+          to.params.pictures = await read.getImages();
+        }
+        return next();
+      } catch (e) {
+        return next(from.path || "/login");
       }
-
-      // Attach pre-fetched pictures to params, if not there already
-      if (!to.params.pictures) {
-        to.params.pictures = await read.getImages();
-      }
-
-      await write.authenticatedSelf();
-      return next();
     },
   },
   {

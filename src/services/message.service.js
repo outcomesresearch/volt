@@ -1,7 +1,8 @@
 const messageCodes = {
   "notes.saved": "Note saved!",
-  "PERMISSION_DENIED: Permission denied":
-    "Your note could not be saved! (Permission Denied)",
+  "User records note": "Your note could not be saved! (Permission denied)",
+  "User authenticates self and begins training session":
+    "Cannot begin training session! (Permission denied)",
   "The email address is badly formatted.":
     "Study key is in incorrectly formatted!",
   "There is no user record corresponding to this identifier. The user may have been deleted.":

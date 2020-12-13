@@ -1,6 +1,7 @@
 import firebase from "firebase";
 import store from "../store/";
 import picturesPerOdor from "../assets/picturesPerOdor.json";
+import root from "../main";
 
 const getDate = () => {
   return new Date().toString();
@@ -93,7 +94,7 @@ function writeChild(path, obj, action) {
 function catchHandler(promise) {
   return promise.catch((e) => {
     e.message += ` during: ${this.purpose}`;
-    console.error(e.message);
+    throw e;
   });
 }
 
@@ -104,13 +105,19 @@ export const write = {
   authenticatedSelf: function() {
     const purpose = "User authenticates self and begins training session";
     const c = catchHandler.bind({ purpose });
-    return new Promise((res) => {
+    return new Promise((res, rej) => {
       if (store.getters.currentUser) {
         const startedTime = getDate();
         const obj = { studyID: store.getters.currentUser.id, startedTime };
-        const sessionKey = c(writeChild(`sessions`, obj, "push", purpose)).key;
-        store.dispatch("SET_SESSION_KEY", sessionKey);
-        res();
+        c(writeChild(`sessions`, obj, "push"))
+          .then((resp) => {
+            store.dispatch("SET_SESSION_KEY", resp.key);
+            res();
+          })
+          .catch((e) => {
+            root.$root.$emit("show-snackbar", e.message);
+            rej(e);
+          });
       }
     });
   },
@@ -127,7 +134,7 @@ export const write = {
   },
 
   recordSessionEnd: function() {
-    const purpose = "Training sesison (all odors) ended successfully";
+    const purpose = "Training session (all odors) ended successfully";
     const c = catchHandler.bind({ purpose });
     if (store.getters.currentUser) {
       const sessionKey = store.getters.sessionKey;
@@ -137,9 +144,11 @@ export const write = {
   },
 
   recordNote: function(content) {
+    const purpose = "User records note";
+    const c = catchHandler.bind({ purpose });
     if (store.getters.currentUser) {
       const recordedTime = getDate();
-      return writeChild("notes", { recordedTime, content }, "push");
+      return c(writeChild("notes", { recordedTime, content }, "push"));
     }
   },
 };
