@@ -37,6 +37,7 @@ const state = {
   currentUser: undefined,
   sessionKey: undefined,
   notes: [],
+  completedDays: 0,
 };
 
 const getters = {
@@ -49,9 +50,24 @@ const getters = {
   notes(state) {
     return state.notes;
   },
+  completedDays(state) {
+    return state.completedDays;
+  },
 };
 
 const actions = {
+  SAVE_COMPLETEDDAY({ commit }) {
+    const purpose = "User completed two trainings for the day";
+    const c = catchHandler.bind({ purpose });
+    if (state.currentUser) {
+      const completed = state.completedDays;
+      const newVal = completed ? completed + 1 : 1;
+      return c(writeChild("completedDays", newVal, "set")).then((r) => {
+        console.log("new value", r, newVal);
+        commit("WRITE_COMPLETEDDAY", newVal);
+      });
+    }
+  },
   /**
    * Save in Firebase that a user completed a smell-rest cycle for an odor during a given session
    */
@@ -185,9 +201,13 @@ const mutations = {
   SET_AUTH(state, user) {
     state.currentUser = user;
     state.notes = user.notes || [];
+    state.completedDays = user.completedDays || 0;
   },
   WRITE_NOTE(state, { newNote, key }) {
     Vue.set(state.notes, key, newNote);
+  },
+  WRITE_COMPLETEDDAY(state, newVal) {
+    state.completedDays = newVal;
   },
   SESSION_KEY(state, value) {
     state.sessionKey = value;

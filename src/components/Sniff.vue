@@ -22,6 +22,7 @@
 
 <script>
 import { mapGetters } from "vuex";
+import moment from "moment";
 
 export default {
   name: "Sniff",
@@ -46,6 +47,37 @@ export default {
     handlePause() {
       this.paused = !this.paused;
       this.$root.$emit("pause");
+    },
+    // What constitutes a completed session? (Compliance panel): Has endedTime, startedTime, and odors keys.  Odor key has four odors in it
+    completedSession(session) {
+      return (
+        session.endedTime &&
+        session.startedTime &&
+        session.odors &&
+        Object.keys(session.odors).length === 4
+      );
+    },
+    countCompletedSessions() {
+      // Sort sessions by date
+      const sortedSessions = Object.keys(this.currentUser.sessions)
+        .map((s) => this.currentUser.sessions[s])
+        .filter(this.completedSession)
+        .sort((a, b) => new Date(a.endedTime) - new Date(b.endedTime));
+
+      if (sortedSessions.length) {
+        // prettier-ignore
+        const lastMidnight = moment().subtract(1, "days").startOf("day");
+        let lastSession = moment(sortedSessions.pop().endedTime);
+        let sessionsSinceYesterday = 0;
+        while (lastSession.isAfter(lastMidnight)) {
+          sessionsSinceYesterday += 1;
+          lastSession = moment(sortedSessions.pop().endedTime);
+        }
+        // Increment firebase if they just 2 sessions for the day
+        if (sessionsSinceYesterday === 2) {
+          this.$store.dispatch("SAVE_COMPLETEDDAY");
+        }
+      }
     },
   },
   beforeRouteLeave(to, from, next) {
@@ -78,6 +110,7 @@ export default {
 
       if (i === this.pictures.length - 1) {
         this.endSniffing();
+        this.countCompletedSessions();
         this.$store.dispatch("SAVE_SESSIONEND");
         this.$root.$emit("show-snackbar", "session.ended");
         setTimeout(() => this.$router.push("/"), 500);

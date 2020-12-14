@@ -79,9 +79,11 @@
           <volt-card>
             <template v-slot:content
               ><div class="circle-text">
-                <span class="traffic-light">●</span>
+                <span :class="`traffic-light ${complianceColor}`">●</span>
                 <div class="compliance-text">
-                  Both trainings completed on 30 of the last 50 days
+                  Both trainings completed on {{ completedDays }} of the last
+                  {{ totalDays }}
+                  days
                 </div>
               </div>
             </template>
@@ -107,11 +109,25 @@ export default {
     return {
       imagesFetched: false,
       pictures: [],
+      totalDays: undefined,
     };
   },
   components: { VoltHeader, VoltFooter, VoltCard, VoltPastNote },
   computed: {
-    ...mapGetters(["currentUser", "notes"]),
+    ...mapGetters(["currentUser", "notes", "completedDays"]),
+    complianceColor() {
+      if (!this.totalDays) return; // no color to begin w
+
+      const thresholds = {
+        90: "green",
+        80: "orange",
+        70: "red",
+      };
+      const limits = [70, 80, 90];
+      const percentageComplete = (this.completedDays / this.totalDays) * 100;
+      const matched = limits.find((l) => percentageComplete <= l);
+      return thresholds[matched || 90]; // Return corresponding class name
+    },
     sortedNotes() {
       const keys = Object.keys(this.notes);
       return keys.length
@@ -124,6 +140,7 @@ export default {
   async created() {
     this.pictures = await this.$store.dispatch("GET_IMAGES");
     this.imagesFetched = true;
+    this.totalDays = 55;
   },
   methods: {
     async startExercise() {
@@ -139,9 +156,11 @@ export default {
 
 $radius-small: 3px;
 $instruction-color: #2b8282;
-$green: #0c0;
-$red: #ff0033;
-$orange: #ffa500;
+$colors: (
+  "green": #0c0,
+  "orange": #ffa500,
+  "red": #ff0033,
+);
 
 // Past notes panel
 .past-notes {
@@ -220,14 +239,19 @@ $orange: #ffa500;
 // Compliance readout
 .compliance {
   .traffic-light {
-    color: $green;
-    text-shadow: 0px 0px 7px $green;
+    color: white;
     -webkit-transform: translateZ(0);
-    -webkit-text-shadow: 0px 0px 7px $green;
     font-size: 60px;
     margin-right: 10px;
     line-height: 40px;
     margin-bottom: 5px;
+  }
+  @each $name, $hex in $colors {
+    .#{$name} {
+      color: #{$hex};
+      text-shadow: 0px 0px 7px #{$hex};
+      -webkit-text-shadow: 0px 0px 7px #{$hex};
+    }
   }
   .circle-text {
     display: flex;
