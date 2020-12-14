@@ -22,7 +22,6 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { write } from "../services/firebase.service";
 
 export default {
   name: "Sniff",
@@ -75,11 +74,11 @@ export default {
         this.$root.$emit("start-timer", 5);
       });
 
-      if (!this.done) write.recordOdor(this.pictures[i].name);
+      if (!this.done) this.$store.dispatch("SAVE_ODOR", this.pictures[i].name);
 
       if (i === this.pictures.length - 1) {
         this.endSniffing();
-        write.recordSessionEnd();
+        this.$store.dispatch("SAVE_SESSIONEND");
         this.$root.$emit("show-snackbar", "session.ended");
         setTimeout(() => this.$router.push("/"), 500);
       }

@@ -41,8 +41,6 @@
 </template>
 
 <script>
-import { write } from "@/services/firebase.service.js";
-
 export default {
   data() {
     return {
@@ -58,8 +56,8 @@ export default {
     },
     async save() {
       this.inProgress = true;
-      write
-        .recordNote(this.text)
+      this.$store
+        .dispatch("SAVE_NOTE", this.text)
         .then(() => {
           this.text = undefined;
           this.close();

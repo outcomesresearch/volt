@@ -1,6 +1,5 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import { auth, write, read } from "../services/firebase.service.js";
 import store from "../store/";
 
 Vue.use(VueRouter);
@@ -11,9 +10,8 @@ const routes = [
     name: `landing-page`,
     component: () => import(`@/components/Colors.vue`),
     beforeEnter: async function(to, from, next) {
-      await store.dispatch("SET_SESSION_KEY", undefined);
-      auth
-        .checkAuthentication()
+      store
+        .dispatch("CHECK_AUTH")
         .then(next)
         .catch(() => next("/login"));
     },
@@ -25,12 +23,12 @@ const routes = [
     beforeEnter: async function(to, from, next) {
       try {
         if (!from.name) {
-          await auth.checkAuthentication();
+          await store.dispatch("CHECK_AUTH");
         }
-        await write.authenticatedSelf();
+        await store.dispatch("BEGIN_TRAINING");
         // Attach pre-fetched pictures to params, if not there already
         if (!to.params.pictures) {
-          to.params.pictures = await read.getImages();
+          to.params.pictures = await store.dispatch("GET_IMAGES");
         }
         return next();
       } catch (e) {

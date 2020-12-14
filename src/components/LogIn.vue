@@ -48,7 +48,6 @@
 </template>
 
 <script>
-import { auth } from "../services/firebase.service";
 import VoltHeader from "./Header.vue";
 import VoltFooter from "./Footer.vue";
 
@@ -70,12 +69,10 @@ export default {
   },
   methods: {
     signin() {
-      auth
-        .login(this.form.studyID)
-        .then(auth.checkAuthentication)
-        .then(() => {
-          this.$router.push("/");
-        })
+      this.$store
+        .dispatch("LOGIN", this.form.studyID)
+        .then(() => this.$store.dispatch("CHECK_AUTH"))
+        .then(() => this.$router.push("/"))
         .catch((err) => {
           // Show snackbar with error on sign in failure
           this.$root.$emit("show-snackbar", err.message);

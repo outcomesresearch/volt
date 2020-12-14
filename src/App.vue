@@ -41,7 +41,6 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { auth } from "./services/firebase.service";
 import { txlate } from "@/services/message.service.js";
 import VoltTimer from "./components/Timer";
 import VoltModal from "./components/Modal";
@@ -99,9 +98,8 @@ export default {
   methods: {
     logout() {
       this.counterStatus = false;
-      auth.logout().then(() => {
-        this.$store.dispatch("LOGOUT");
-        this.$router.push("/login").catch((r) => console.log(r.message));
+      this.$store.dispatch("LOGOUT").then(() => {
+        this.$router.push("/login").catch((err) => console.log(err.message));
       });
     },
   },
