@@ -102,6 +102,7 @@ import VoltHeader from "./Header.vue";
 import VoltFooter from "./Footer.vue";
 import VoltCard from "./Card.vue";
 import VoltPastNote from "./PastNote.vue";
+import moment from "moment";
 
 export default {
   name: "colors",
@@ -116,7 +117,7 @@ export default {
   computed: {
     ...mapGetters(["currentUser", "notes", "completedDays"]),
     complianceColor() {
-      if (!this.totalDays) return; // no color to begin w
+      if (!this.totalDays || !this.currentUser) return; // no color to begin w
 
       const thresholds = {
         90: "green",
@@ -140,7 +141,10 @@ export default {
   async created() {
     this.pictures = await this.$store.dispatch("GET_IMAGES");
     this.imagesFetched = true;
-    this.totalDays = 55;
+    this.totalDays = moment().diff(
+      moment(this.currentUser.enrollmentDate),
+      "days"
+    );
   },
   methods: {
     async startExercise() {

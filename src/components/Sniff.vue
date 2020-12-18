@@ -57,26 +57,23 @@ export default {
         Object.keys(session.odors).length === 4
       );
     },
+    // After midnight (session completed today).  Session guaranteed to have endedTime since this.completedSession() runs before
+    afterMidnight(session) {
+      return moment(session.endedTime).isAfter(moment().startOf("day"));
+    },
     countCompletedSessions() {
+      // If no sessions, this can't be their 2nd, so we wont record anyway
+      if (!this.currentUser.sessions) return;
+
       // Sort sessions by date
       const sortedSessions = Object.keys(this.currentUser.sessions)
         .map((s) => this.currentUser.sessions[s])
-        .filter(this.completedSession)
+        .filter((s) => this.completedSession(s) && this.afterMidnight(s))
         .sort((a, b) => new Date(a.endedTime) - new Date(b.endedTime));
 
-      if (sortedSessions.length) {
-        // prettier-ignore
-        const lastMidnight = moment().subtract(1, "days").startOf("day");
-        let lastSession = moment(sortedSessions.pop().endedTime);
-        let sessionsSinceYesterday = 0;
-        while (lastSession.isAfter(lastMidnight)) {
-          sessionsSinceYesterday += 1;
-          lastSession = moment(sortedSessions.pop().endedTime);
-        }
-        // Increment firebase if they just 2 sessions for the day
-        if (sessionsSinceYesterday === 2) {
-          this.$store.dispatch("SAVE_COMPLETEDDAY");
-        }
+      // If we've gotten all sessions from today and there's exactly one other (not including the one that just completed), record the 2/2 for the day
+      if (sortedSessions.length === 1) {
+        this.$store.dispatch("SAVE_COMPLETEDDAY");
       }
     },
   },
