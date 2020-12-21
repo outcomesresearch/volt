@@ -141,10 +141,8 @@ export default {
   async created() {
     this.pictures = await this.$store.dispatch("GET_IMAGES");
     this.imagesFetched = true;
-    this.totalDays = moment().diff(
-      moment(this.currentUser.enrollmentDate),
-      "days"
-    );
+    this.totalDays =
+      moment().diff(moment(this.currentUser.enrollmentDate), "days") + 1;
   },
   methods: {
     async startExercise() {

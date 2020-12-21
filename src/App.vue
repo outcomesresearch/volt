@@ -4,7 +4,7 @@
       <md-app-toolbar class="md-primary md-dense">
         <h3 v-if="currentUser" class="md-title welcome-name">
           Welcome,
-          {{ currentUser.fname | truncatedString(17) }}
+          {{ currentUser.fname | truncatedString(nameCharCount) }}
         </h3>
         <div class="counter">
           <volt-timer
@@ -44,12 +44,18 @@ import { mapGetters } from "vuex";
 import { txlate } from "@/services/message.service.js";
 import VoltTimer from "./components/Timer";
 import VoltModal from "./components/Modal";
+const sizes = [
+  { width: 280, chars: 8 },
+  { width: 380, chars: 12 },
+  { width: 2000, chars: 17 },
+];
 
 export default {
   name: "App",
   components: { VoltTimer, VoltModal },
   data() {
     return {
+      nameCharCount: 0,
       counterStatus: false,
       snackBarShowing: false,
       snackBarMessage: undefined,
@@ -63,6 +69,7 @@ export default {
     };
   },
   mounted() {
+    this.nameCharCount = sizes.find((b) => window.innerWidth <= b.width).chars;
     this.$root.$on("start-timer", async (limit) => {
       this.counterStatus = true;
       this.progress = 0;
