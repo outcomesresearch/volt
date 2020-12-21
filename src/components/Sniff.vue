@@ -96,11 +96,11 @@ export default {
       await new Promise((r) => {
         this.pictureIndex = i;
         resolve = r;
-        this.$root.$emit("start-timer", 5);
+        this.$root.$emit("start-timer", 10);
       });
       await new Promise((r) => {
         resolve = r;
-        this.$root.$emit("start-timer", 5);
+        this.$root.$emit("start-timer", 30);
       });
 
       if (!this.done) this.$store.dispatch("SAVE_ODOR", this.pictures[i].name);
