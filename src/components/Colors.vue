@@ -103,6 +103,7 @@ import VoltFooter from "./Footer.vue";
 import VoltCard from "./Card.vue";
 import VoltPastNote from "./PastNote.vue";
 import moment from "moment";
+const FETCH_ERROR = "Partcipant logged out during image prefetch";
 
 export default {
   name: "colors",
@@ -139,10 +140,14 @@ export default {
     },
   },
   async created() {
-    this.pictures = await this.$store.dispatch("GET_IMAGES");
-    this.imagesFetched = true;
     this.totalDays =
       moment().diff(moment(this.currentUser.enrollmentDate), "days") + 1;
+
+    this.pictures = await this.$store
+      .dispatch("GET_IMAGES")
+      .catch(() => console.log(FETCH_ERROR));
+
+    this.imagesFetched = true;
   },
   methods: {
     async startExercise() {
@@ -242,6 +247,7 @@ $colors: (
 .compliance {
   .traffic-light {
     color: white;
+    user-select: none;
     -webkit-transform: translateZ(0);
     font-size: 60px;
     margin-right: 10px;

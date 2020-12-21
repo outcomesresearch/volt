@@ -70,7 +70,7 @@ export default {
   methods: {
     signin() {
       this.$store
-        .dispatch("LOGIN", this.form.studyID)
+        .dispatch("LOGIN", this.form.studyID.trim())
         .then(() => this.$store.dispatch("CHECK_AUTH"))
         .then(() => this.$router.push("/"))
         .catch((err) => {

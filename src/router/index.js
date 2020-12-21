@@ -41,6 +41,11 @@ const routes = [
     name: "login-screen",
     component: () => import(`@/components/LogIn.vue`),
   },
+  {
+    path: "*",
+    name: "catch-all",
+    redirect: "/",
+  },
 ];
 
 const router = new VueRouter({
