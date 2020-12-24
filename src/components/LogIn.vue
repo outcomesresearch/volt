@@ -50,6 +50,7 @@
 <script>
 import VoltHeader from "./Header.vue";
 import VoltFooter from "./Footer.vue";
+import debounce from "lodash/debounce";
 
 export default {
   name: "login-view",
@@ -68,7 +69,8 @@ export default {
     };
   },
   methods: {
-    signin() {
+    signin: debounce(function() {
+      this.sending = true;
       this.$store
         .dispatch("LOGIN", this.form.studyID.trim())
         .then(() => this.$store.dispatch("CHECK_AUTH"))
@@ -76,8 +78,9 @@ export default {
         .catch((err) => {
           // Show snackbar with error on sign in failure
           this.$root.$emit("show-snackbar", err.message);
+          this.sending = false;
         });
-    },
+    }, 500),
   },
 };
 </script>
