@@ -8,6 +8,11 @@
             <md-card-header>
               <div class="md-title">
                 <strong>Past Notes</strong>
+                <md-button
+                  class="md-primary make-note-button"
+                  @click="$root.$emit('making-note')"
+                  >Write a note</md-button
+                >
               </div>
             </md-card-header>
           </template>
@@ -27,13 +32,6 @@
               <div>No notes yet!</div>
             </div>
           </template>
-          <template v-slot:footer>
-            <md-card-actions>
-              <md-button class="md-primary" @click="$root.$emit('making-note')"
-                >Write a note</md-button
-              >
-            </md-card-actions>
-          </template>
         </volt-card>
       </div>
       <div class="right-column">
@@ -51,18 +49,20 @@
                 <div>
                   <ul>
                     <li>
-                      Prepare the four odor oils by dropping them on a cotton
-                      ball and placing them in their respectively labeled jars.
+                      Collect the jars with the four unique scents for the
+                      current month.
                     </li>
                     <li>
-                      Sniff each scent for 10 seconds, twice daily, once in the
-                      morning and once in evening<span
+                      To smell, uncap the appropriate jar, hold it to your nose,
+                      and gently draw in air.
+                    </li>
+                    <li>
+                      Smell each essential oil for 15 seconds, with a 30-second
+                      rest between smells, once in the morning and once in the
+                      evening<span
                         v-if="currentUser && currentUser.studyArm === 'photo'"
-                        >, while looking at the photo of the odor</span
+                        >, while looking at the photo of the scent</span
                       >.
-                    </li>
-                    <li>
-                      Take 30 seconds of rest between each scent.
                     </li>
                   </ul>
                 </div>
@@ -81,7 +81,7 @@
               ><div class="circle-text">
                 <span :class="`traffic-light ${complianceColor}`">●</span>
                 <div class="compliance-text">
-                  Both trainings completed on {{ completedDays }} of the last
+                  Daily trainings completed on {{ completedDays }} of the last
                   {{ totalDays }}
                   days
                 </div>
@@ -174,6 +174,9 @@ $colors: (
   .past-note-container {
     display: grid;
     grid-row-gap: 16px;
+  }
+  .make-note-button {
+    float: right;
   }
   .notes-placeholder {
     display: flex;

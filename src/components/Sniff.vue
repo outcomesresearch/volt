@@ -2,7 +2,13 @@
   <div class="image-wrapper" ref="sniffComponent" v-if="!done">
     <div class="smelling-banner" v-show="paused">Paused</div>
     <div v-show="!paused">
-      <div class="resting-banner" v-show="resting">Resting...</div>
+      <div class="resting-banner" v-show="resting">
+        Breathe and relax before training with the next odor,
+        <span style="font-style: oblique">{{
+          pictures[pictureIndex + 1] && pictures[pictureIndex + 1].name
+        }}</span
+        >.
+      </div>
       <div v-show="!resting && pictures.length">
         <div class="smelling-banner">
           Smelling {{ pictures[pictureIndex].name }}
@@ -96,12 +102,16 @@ export default {
       await new Promise((r) => {
         this.pictureIndex = i;
         resolve = r;
-        this.$root.$emit("start-timer", 10);
+        this.$root.$emit("start-timer", 15);
       });
-      await new Promise((r) => {
-        resolve = r;
-        this.$root.$emit("start-timer", 30);
-      });
+
+      // Dont rest after last odor
+      if (i !== this.pictures.length - 1) {
+        await new Promise((r) => {
+          resolve = r;
+          this.$root.$emit("start-timer", 30);
+        });
+      }
 
       if (!this.done) this.$store.dispatch("SAVE_ODOR", this.pictures[i].name);
 

@@ -1,6 +1,6 @@
 <template>
   <md-card class="past-note">
-    <md-card-content class="card-content">
+    <md-card-content>
       <volt-read-more>{{ $attrs.note.content }}</volt-read-more>
     </md-card-content>
     <md-card-actions
@@ -36,6 +36,7 @@ export default {
   & .md-card-content {
     height: unset;
     padding-bottom: 0px;
+    font-size: 1.1em;
   }
 }
 
