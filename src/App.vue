@@ -32,7 +32,7 @@
         <router-view />
       </md-app-content>
     </md-app>
-    <md-snackbar :md-active.sync="snackBarShowing">
+    <md-snackbar :md-active.sync="snackBarShowing" :md-duration="7000">
       {{ snackBarMessage }}
     </md-snackbar>
     <volt-modal :active="modalShowing" />
@@ -153,6 +153,15 @@ body {
 
 .md-button-content {
   font-weight: bold;
+}
+
+#app ~ .md-snackbar {
+  // Sibling combinator bc md-snackbar actually gets rendered separately from where it's specified in the DOM tree
+  box-shadow: 0 3px 5px -1px rgba(90, 90, 90, 0.2),
+    0 6px 10px 0 rgba(100, 100, 100, 0.14),
+    0 1px 18px 0 rgba(100, 100, 100, 0.12);
+  margin-bottom: 10px;
+  font-size: 16px;
 }
 
 h1 {

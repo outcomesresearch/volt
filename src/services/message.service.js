@@ -3,14 +3,13 @@ const messageCodes = {
   "User records note": "Your note could not be saved! (Permission denied)",
   "User authenticates self and begins training session":
     "Cannot begin training session! (Permission denied)",
-  "The email address is badly formatted.":
-    "Study key is in incorrectly formatted!",
+  "The email address is badly formatted.": "Study ID incorrectly formatted!",
   "There is no user record corresponding to this identifier. The user may have been deleted.":
     "Participant not found!",
   "Client doesn't have permission to access the desired data.":
-    "Can't log in (no permissions to the database). Please contact amish.khan@wustl.edu.",
+    "Can't log in (Permission denied). Please contact amish.khan@wustl.edu.",
   "session.ended":
-    "Thanks for participating! Feel free to jot down anything special in a Note.",
+    "Thanks for training! Be sure to jot down anything special in a note.",
 };
 
 export const txlate = function(thisKey) {
