@@ -32,7 +32,7 @@
           class="md-primary"
           v-show="!inProgress"
           @click="save"
-          :disabled="!text"
+          :disabled="!text || !text.trim()"
           >Save</md-button
         >
       </div>
@@ -57,7 +57,7 @@ export default {
     async save() {
       this.inProgress = true;
       this.$store
-        .dispatch("SAVE_NOTE", this.text)
+        .dispatch("SAVE_NOTE", this.text.trim())
         .then(() => {
           this.text = undefined;
           this.close();

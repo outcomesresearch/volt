@@ -40,6 +40,12 @@ const routes = [
     path: "/login",
     name: "login-screen",
     component: () => import(`@/components/LogIn.vue`),
+    beforeEnter: function(to, from, next) {
+      store
+        .dispatch("LOGOUT")
+        .then(next)
+        .catch(console.log);
+    },
   },
   {
     path: "*",
