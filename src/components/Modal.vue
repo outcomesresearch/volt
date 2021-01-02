@@ -1,6 +1,6 @@
 <template>
   <md-dialog
-    :md-active.sync="$parent.makingNote"
+    :md-active.sync="$parent.modalShowing"
     @md-opened="$root.$emit('modal', true)"
     @md-closed="$root.$emit('modal', false)"
   >

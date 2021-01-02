@@ -59,7 +59,6 @@ export default {
       counterStatus: false,
       snackBarShowing: false,
       snackBarMessage: undefined,
-      makingNote: false,
       intervalHandle: undefined,
       modalShowing: false,
       timerRefreshKey: 0,
@@ -88,10 +87,6 @@ export default {
 
     this.$root.$on("modal", (opened) => {
       this.modalShowing = opened;
-    });
-
-    this.$root.$on("making-note", () => {
-      this.makingNote = true;
     });
 
     this.$root.$on("counter-status", (status) => (this.counterStatus = status));

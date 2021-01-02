@@ -10,7 +10,7 @@
                 <strong>Past Notes</strong>
                 <md-button
                   class="md-primary make-note-button"
-                  @click="$root.$emit('making-note')"
+                  @click="$root.$emit('modal', true)"
                   >Write a note</md-button
                 >
               </div>
@@ -145,6 +145,9 @@ export default {
     this.pictures = await this.$store.dispatch("GET_IMAGES").catch(console.log);
 
     this.imagesFetched = true;
+  },
+  beforeDestroy() {
+    this.$root.$emit("modal", false);
   },
   methods: {
     async startExercise() {
