@@ -192,7 +192,12 @@ const actions = {
     const purpose = "User logs in with studyID";
     const c = catchHandler.bind({ purpose });
     return c(
-      initializedApp.auth().signInWithEmailAndPassword(studyID, "password")
+      initializedApp
+        .auth()
+        .signInWithEmailAndPassword(
+          `${studyID}@outcomesresearch.github.io`,
+          process.env.VUE_APP_FB_PASSWORD
+        )
     );
   },
 };
