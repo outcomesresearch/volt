@@ -249,6 +249,12 @@ Sniff Carousel:
     & .right-column {
       order: 1;
     }
+
+    // Sizing / centering CSS for "No notes yet!" text on mobile
+    .notes-placeholder {
+      font-size: 20px !important;
+      margin-top: -8px;
+    }
   }
 }
 </style>
