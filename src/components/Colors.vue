@@ -64,6 +64,13 @@
                         >, while looking at the photo of the scent</span
                       >.
                     </li>
+                    <li>
+                      When ready to begin, click the “Start” button below. This
+                      is
+                      <span style="font-style: oblique"><b>REQUIRED</b>:</span>
+                      it ensures all individuals smell for the same time
+                      duration.
+                    </li>
                   </ul>
                 </div>
                 <div class="start-button md-primary expanded">
